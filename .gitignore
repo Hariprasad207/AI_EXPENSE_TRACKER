@@ -1,0 +1,18 @@
+@"
+# Java / Spring Boot
+**/target/
+**/.idea/
+
+# Node.js
+**/node_modules/
+**/dist/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+"@ | Set-Content .gitignore
+**/src/main/resources/application.properties
