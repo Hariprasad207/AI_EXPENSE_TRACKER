@@ -69,15 +69,16 @@ function Login() {
             }}
         >
 
-            <Card sx={{ width: 400 }}>
+            <Card sx={{ width: "100%", maxWidth: 400 }}>
 
-                <CardContent sx={{ padding: 4 }}>
+                <CardContent sx={{ p: { xs: 2.5, sm: 4 } }}>
 
                     <Typography
                         variant="h4"
                         gutterBottom
                         sx={{
                             textAlign: "center",
+                            fontSize: { xs: "1.8rem", sm: "2.125rem" },
                         }}
                     >
                         Expense Tracker

@@ -177,14 +177,15 @@ function EditExpense() {
         <Box
             sx={{
                 maxWidth: 700,
-                margin: "40px auto",
-                padding: 2,
+                width: "100%",
+                margin: { xs: "16px auto", sm: "40px auto" },
+                padding: { xs: 0, sm: 2 },
             }}
         >
 
             <Card>
 
-                <CardContent sx={{ padding: 4 }}>
+                <CardContent sx={{ p: { xs: 2, sm: 4 } }}>
 
                     <Typography
                         variant="h4"

@@ -1,5 +1,6 @@
 package com.example.Expense_Tracker.Service;
 
+import com.example.Expense_Tracker.Exception.AiChatException;
 import com.example.Expense_Tracker.Repository.AiChatHistoryRepo;
 import com.example.Expense_Tracker.dto.AiChat.AiChatHistoryRequest;
 import com.example.Expense_Tracker.dto.AiChat.AiChatHistoryResponse;
@@ -33,7 +34,7 @@ public class AiChatService {
         }
 
         if (request.getMessage() == null || request.getMessage().isBlank()) {
-            throw new IllegalArgumentException("Message cannot be empty");
+            throw new AiChatException("Message cannot be empty",400);
         }
 
         AIChatHistory userMessage = AIChatHistory.builder()
@@ -46,13 +47,22 @@ public class AiChatService {
 
         aiChatHistoryRepo.save(userMessage);
 
-        FinancialContext financialContext =financialContextService.buildFinancialContext(userId);
+        FinancialContext financialContext;
+
+        try {
+            financialContext =financialContextService.buildFinancialContext(userId);
+        } catch (Exception exception) {
+            throw new AiChatException("Unable to retrieve your financial information. Please try again later.",
+                    500,exception
+            );
+        }
+
         String financialContextJson;
 
         try {
             financialContextJson =objectMapper.writeValueAsString(financialContext);
         } catch (Exception exception) {
-            throw new RuntimeException("Unable to process financial context",exception);
+            throw new AiChatException("Unable to process your financial information.",500,exception);
         }
 
         String systemPrompt = """

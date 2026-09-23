@@ -329,7 +329,7 @@ function ExpenseList() {
             dateAdapter={AdapterDayjs}
         >
 
-            <Box sx={{ padding: 4 }}>
+            <Box sx={{ p: { xs: 0, sm: 1, md: 4 } }}>
 
 
                 {/* ================================================= */}
@@ -342,6 +342,8 @@ function ExpenseList() {
                         justifyContent: "space-between",
                         alignItems: "center",
                         mb: 3,
+                        gap: 2,
+                        flexWrap: "wrap",
                     }}
                 >
 
@@ -381,7 +383,7 @@ function ExpenseList() {
 
                 <Paper
                     sx={{
-                        p: 3,
+                        p: { xs: 2, sm: 3 },
                         mb: 3,
                     }}
                 >
@@ -579,6 +581,7 @@ function ExpenseList() {
                             justifyContent: "flex-end",
                             gap: 2,
                             mt: 3,
+                            flexWrap: "wrap",
                         }}
                     >
 
@@ -646,7 +649,7 @@ function ExpenseList() {
 
                         <TableContainer>
 
-                            <Table>
+                            <Table sx={{ minWidth: 680 }}>
 
                                 {/* ================================= */}
                                 {/* TABLE HEADER */}

@@ -251,7 +251,7 @@ function BudgetList() {
 
     return (
 
-        <Box sx={{ p: 4 }}>
+        <Box sx={{ p: { xs: 0, sm: 1, md: 4 } }}>
 
             {/* ================================================= */}
             {/* HEADER */}
@@ -318,6 +318,7 @@ function BudgetList() {
                         <FormControl
                             sx={{
                                 minWidth: 180,
+                                width: { xs: "100%", sm: "auto" },
                             }}
                         >
 
@@ -370,6 +371,7 @@ function BudgetList() {
                         <FormControl
                             sx={{
                                 minWidth: 140,
+                                width: { xs: "100%", sm: "auto" },
                             }}
                         >
 

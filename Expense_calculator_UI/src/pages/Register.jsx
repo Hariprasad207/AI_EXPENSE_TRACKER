@@ -54,12 +54,13 @@ function Register() {
             }}
         >
 
-            <Card sx={{ width: 400 }}>
-                <CardContent sx={{ padding: 4 }}>
+            <Card sx={{ width: "100%", maxWidth: 400 }}>
+                <CardContent sx={{ p: { xs: 2.5, sm: 4 } }}>
                     <Typography
                         variant="h4"
                         textAlign="center"
                         gutterBottom
+                        sx={{ fontSize: { xs: "1.8rem", sm: "2.125rem" } }}
                     >
                         Create Account
                     </Typography>

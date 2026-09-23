@@ -245,7 +245,7 @@ function CategoryForm() {
 
         <Box
             sx={{
-                p: 3,
+                p: { xs: 0, sm: 2, md: 3 },
 
                 maxWidth:
                     650,
@@ -273,6 +273,7 @@ function CategoryForm() {
 
                     mb:
                         3,
+                    flexWrap: "wrap",
                 }}
             >
 

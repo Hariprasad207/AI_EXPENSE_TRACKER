@@ -275,8 +275,9 @@ function AddExpense() {
             <Box
                 sx={{
                     maxWidth: 700,
-                    margin: "40px auto",
-                    padding: 2,
+                    width: "100%",
+                    margin: { xs: "16px auto", sm: "40px auto" },
+                    padding: { xs: 0, sm: 2 },
                 }}
             >
 
@@ -284,7 +285,7 @@ function AddExpense() {
 
                     <CardContent
                         sx={{
-                            padding: 4,
+                            p: { xs: 2, sm: 4 },
                         }}
                     >
 
@@ -555,6 +556,7 @@ function AddExpense() {
                                     justifyContent:
                                         "flex-end",
                                     mt: 3,
+                                    flexWrap: "wrap",
                                 }}
                             >
 

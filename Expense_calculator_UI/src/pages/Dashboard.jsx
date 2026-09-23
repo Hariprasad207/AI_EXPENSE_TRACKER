@@ -69,9 +69,18 @@ const CHART_COLORS = [
     "#ed6c02",
     "#9c27b0",
     "#d32f2f",
+    "#00897b",
+    "#fbc02d",
+    "#f4511e",
     "#0288d1",
+    "#e91e63",
+    "#3949ab",
     "#7b1fa2",
     "#388e3c",
+    "#00acc1",
+    "#7cb342",
+    "#6d4c41",
+    "#546e7a",
 ];
 
 
@@ -203,7 +212,7 @@ function Dashboard() {
 
     return (
 
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: { xs: 0, sm: 1, md: 3 } }}>
 
             {/* =================================================
                 PAGE HEADER
@@ -213,10 +222,10 @@ function Dashboard() {
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center",
                     mb: 4,
                     flexWrap: "wrap",
                     gap: 2,
+                    alignItems: { xs: "stretch", sm: "center" },
                 }}
             >
 
@@ -249,6 +258,8 @@ function Dashboard() {
                     sx={{
                         display: "flex",
                         gap: 2,
+                        width: { xs: "100%", sm: "auto" },
+                        flexDirection: { xs: "column", sm: "row" },
                     }}
                 >
 
@@ -256,7 +267,7 @@ function Dashboard() {
 
                     <FormControl
                         size="small"
-                        sx={{ minWidth: 140 }}
+                        sx={{ minWidth: 140, width: { xs: "100%", sm: "auto" } }}
                     >
 
                         <InputLabel>
@@ -293,7 +304,7 @@ function Dashboard() {
 
                     <FormControl
                         size="small"
-                        sx={{ minWidth: 110 }}
+                        sx={{ minWidth: 110, width: { xs: "100%", sm: "auto" } }}
                     >
 
                         <InputLabel>

@@ -1,5 +1,6 @@
 package com.example.Expense_Tracker.Service;
 
+import com.example.Expense_Tracker.Exception.AiChatException;
 import com.example.Expense_Tracker.dto.AiChat.OllamaChatResponse;
 import com.example.Expense_Tracker.dto.AiChat.OllamachatRequest;
 import lombok.RequiredArgsConstructor;
@@ -41,27 +42,33 @@ public class OllamaService {
                                 .build()
                 ))
                 .build();
+        try {
 
-        OllamaChatResponse response = restClientBuilder
-                .baseUrl(ollamaBaseUrl)
-                .build()
-                .post()
-                .uri("/api/chat")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .body(OllamaChatResponse.class);
+            OllamaChatResponse response = restClientBuilder
+                    .baseUrl(ollamaBaseUrl)
+                    .build()
+                    .post()
+                    .uri("/api/chat")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(request)
+                    .retrieve()
+                    .body(OllamaChatResponse.class);
 
-        if (response == null ||
-                response.getMessage() == null ||
-                response.getMessage().getContent() == null) {
+            if (response == null ||
+                    response.getMessage() == null ||
+                    response.getMessage().getContent() == null) {
+                throw new AiChatException("No valid response received from Ollama",503);
+            }
+            String cleanedResponse = cleanResponse(response.getMessage().getContent());
 
-            throw new RuntimeException(
-                    "No valid response received from Ollama"
-            );
+            if (cleanedResponse == null ||cleanedResponse.isBlank()) {
+                throw new AiChatException("AI service returned an empty response.",503);
+            }
+            return cleanedResponse;
         }
-
-        return cleanResponse(response.getMessage().getContent());
+        catch (AiChatException exception) {
+            throw exception;
+        }
     }
     private String cleanResponse(String response) {
 

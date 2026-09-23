@@ -209,11 +209,12 @@ function NotificationList() {
             ========================== */}
 
             <Stack
-                direction="row"
+                direction={{ xs: "column", sm: "row" }}
                 justifyContent="space-between"
-                alignItems="center"
+                alignItems={{ xs: "flex-start", sm: "center" }}
                 sx={{
                     mb: 3,
+                    gap: 2,
                 }}
             >
 

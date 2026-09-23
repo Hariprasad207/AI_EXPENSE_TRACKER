@@ -18,7 +18,6 @@ import CategoryIcon from "@mui/icons-material/Category";
 import SavingsIcon from "@mui/icons-material/Savings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import ChatIcon from "@mui/icons-material/Chat";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 
@@ -64,18 +63,13 @@ const menuItems = [
         icon: <AutoAwesomeIcon />,
     },
     {
-        label: "AI Chat",
-        path: "/ai-chat",
-        icon: <ChatIcon />,
-    },
-    {
         label: "Settings",
         path: "/settings",
         icon: <SettingsIcon />,
     },
 ];
 
-function Sidebar() {
+function Sidebar({ mobileOpen, onMobileClose }) {
     const location = useLocation();
     const { logout } = useAuth();
     const navigate = useNavigate();
@@ -86,11 +80,13 @@ function Sidebar() {
     };
 
     return (
+        <>
         <Drawer
             variant="permanent"
             sx={{
                 width: drawerWidth,
                 flexShrink: 0,
+                display: { xs: "none", md: "block" },
 
                 "& .MuiDrawer-paper": {
                     width: drawerWidth,
@@ -183,6 +179,40 @@ function Sidebar() {
             </List>
 
         </Drawer>
+
+        <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={onMobileClose}
+            ModalProps={{ keepMounted: true }}
+            sx={{ display: { xs: "block", md: "none" }, "& .MuiDrawer-paper": { width: drawerWidth } }}
+        >
+            <Toolbar>
+                <Typography variant="h6" fontWeight="bold" noWrap>Personal Finance</Typography>
+            </Toolbar>
+            <Divider />
+            <List sx={{ px: 1 }}>
+                {menuItems.map((item) => (
+                    <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
+                        <ListItemButton component={Link} to={item.path} selected={location.pathname === item.path} onClick={onMobileClose} sx={{ borderRadius: 2 }}>
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText primary={item.label} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
+            <Box sx={{ flexGrow: 1 }} />
+            <Divider />
+            <List sx={{ px: 1 }}>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={handleLogout} sx={{ borderRadius: 2 }}>
+                        <ListItemIcon><LogoutIcon /></ListItemIcon>
+                        <ListItemText primary="Logout" />
+                    </ListItemButton>
+                </ListItem>
+            </List>
+        </Drawer>
+        </>
     );
 }
 

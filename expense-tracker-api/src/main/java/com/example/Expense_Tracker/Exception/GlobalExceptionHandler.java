@@ -39,4 +39,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+
+    @ExceptionHandler(AiChatException.class)
+    public ResponseEntity<ErrorResponse> handleAiChatException(AiChatException exception){
+        ErrorResponse response = ErrorResponse.builder()
+                .status(exception.getStatusCode())
+                .message(exception.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(exception.getStatusCode()).body(response);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException(Exception exception){
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message("An unexpected error is occurred. Please try again later")
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(response);
+    }
+
 }

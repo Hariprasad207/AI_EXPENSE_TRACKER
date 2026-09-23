@@ -398,7 +398,7 @@ function IncomeList() {
             dateAdapter={AdapterDayjs}
         >
 
-            <Box sx={{ p: 4 }}>
+            <Box sx={{ p: { xs: 0, sm: 1, md: 4 } }}>
 
 
                 {/* ================================================= */}
@@ -412,6 +412,8 @@ function IncomeList() {
                             "space-between",
                         alignItems: "center",
                         mb: 3,
+                        gap: 2,
+                        flexWrap: "wrap",
                     }}
                 >
 
@@ -451,7 +453,7 @@ function IncomeList() {
 
                 <Paper
                     sx={{
-                        p: 3,
+                        p: { xs: 2, sm: 3 },
                         mb: 3,
                     }}
                 >
@@ -588,6 +590,7 @@ function IncomeList() {
                                 "flex-end",
                             gap: 2,
                             mt: 3,
+                            flexWrap: "wrap",
                         }}
                     >
 
@@ -656,7 +659,7 @@ function IncomeList() {
 
                         <TableContainer>
 
-                            <Table>
+                            <Table sx={{ minWidth: 680 }}>
 
                                 <TableHead>
 

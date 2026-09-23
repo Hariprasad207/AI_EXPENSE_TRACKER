@@ -367,7 +367,7 @@ function IncomeForm() {
                 sx={{
                     maxWidth: 700,
                     mx: "auto",
-                    p: 4,
+                    p: { xs: 0, sm: 2, md: 4 },
                 }}
             >
 
