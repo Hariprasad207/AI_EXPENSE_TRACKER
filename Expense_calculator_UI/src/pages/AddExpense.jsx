@@ -219,10 +219,10 @@ function AddExpense() {
             };
 
 
-            console.log(
-                "Creating expense:",
-                expenseData
-            );
+            // console.log(
+            //     "Creating expense:",
+            //     expenseData
+            // );
 
 
             // =================================================

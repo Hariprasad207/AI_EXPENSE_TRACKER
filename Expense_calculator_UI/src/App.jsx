@@ -30,13 +30,20 @@ import CategoryForm from "./pages/CategoryForm";
 
 import AiInsights from "./pages/AiInsight";
 
+import Settings from "./pages/Settings";
+
+import ForgotPassword from "./pages/ForgetPassword";
+import VerifyOtp from "./pages/VerifyOtp";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
-
   return (
     <BrowserRouter>
-
       <Routes>
+
+        {/* =========================
+            PUBLIC ROUTES
+        ========================== */}
 
         <Route
           path="/login"
@@ -48,10 +55,29 @@ function App() {
           element={<Register />}
         />
 
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+
+        <Route
+          path="/verify-otp"
+          element={<VerifyOtp />}
+        />
+
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
+        />
+
+
+        {/* =========================
+            PROTECTED ROUTES
+        ========================== */}
+
         <Route element={<ProtectedRoute />}>
 
           <Route element={<AppLayout />}>
-
 
             <Route
               path="/dashboard"
@@ -87,7 +113,6 @@ function App() {
               path="/income/:id/edit"
               element={<IncomeForm />}
             />
-
 
             <Route
               path="/budgets"
@@ -129,10 +154,19 @@ function App() {
               element={<AiInsights />}
             />
 
+            <Route
+              path="/settings"
+              element={<Settings />}
+            />
+
           </Route>
 
         </Route>
 
+
+        {/* =========================
+            DEFAULT ROUTES
+        ========================== */}
 
         <Route
           path="/"
@@ -143,7 +177,6 @@ function App() {
             />
           }
         />
-
 
         <Route
           path="*"
@@ -156,10 +189,8 @@ function App() {
         />
 
       </Routes>
-
     </BrowserRouter>
   );
 }
-
 
 export default App;
