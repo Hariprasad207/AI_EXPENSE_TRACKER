@@ -29,6 +29,8 @@ import {
     changePassword,
 } from "../api/user";
 
+import NotificationSettings from "../components/NotificationSettins";
+
 
 function Settings() {
 
@@ -44,7 +46,7 @@ function Settings() {
 
 
     // ==================================================
-    // PROFILE STATE
+    // PROFILE LOADING / MESSAGES
     // ==================================================
 
     const [loading, setLoading] =
@@ -58,6 +60,11 @@ function Settings() {
 
     const [success, setSuccess] =
         useState("");
+
+
+    // ==================================================
+    // PASSWORD STATE
+    // ==================================================
 
     const [showPasswordForm, setShowPasswordForm] =
         useState(false);
@@ -88,6 +95,11 @@ function Settings() {
     const [passwordSuccess, setPasswordSuccess] =
         useState("");
 
+
+    // ==================================================
+    // PASSWORD VISIBILITY
+    // ==================================================
+
     const [showCurrentPassword, setShowCurrentPassword] =
         useState(false);
 
@@ -96,6 +108,11 @@ function Settings() {
 
     const [showConfirmPassword, setShowConfirmPassword] =
         useState(false);
+
+
+    // ==================================================
+    // LOAD PROFILE
+    // ==================================================
 
     useEffect(() => {
 
@@ -106,6 +123,7 @@ function Settings() {
                 setLoading(true);
 
                 setError("");
+
 
                 const data =
                     await getCurrentUserProfile();
@@ -328,7 +346,9 @@ function Settings() {
             );
 
 
-            // Clear password fields
+            // ------------------------------------------
+            // CLEAR PASSWORD FIELDS
+            // ------------------------------------------
 
             setPasswordData({
                 currentPassword: "",
@@ -337,7 +357,9 @@ function Settings() {
             });
 
 
-            // Close form after successful change
+            // ------------------------------------------
+            // CLOSE PASSWORD FORM
+            // ------------------------------------------
 
             setShowPasswordForm(false);
 
@@ -588,24 +610,67 @@ function Settings() {
                                 Currency
                             </InputLabel>
 
-                            <Select name="currency" value={profile.currency} label="Currency" onChange={handleProfileChange} >
-                                <MenuItem value="INR"> INR - Indian Rupee (₹) </MenuItem>
-                                <MenuItem value="USD"> USD - US Dollar ($) </MenuItem>
-                                <MenuItem value="EUR"> EUR - Euro (€) </MenuItem>
-                                <MenuItem value="GBP"> GBP - British Pound (£) </MenuItem>
-                                <MenuItem value="JPY"> JPY - Japanese Yen (¥) </MenuItem>
-                                <MenuItem value="CAD"> CAD - Canadian Dollar (C$) </MenuItem>
-                                <MenuItem value="AUD"> AUD - Australian Dollar (A$) </MenuItem>
-                                <MenuItem value="CHF"> CHF - Swiss Franc (CHF) </MenuItem>
-                                <MenuItem value="SGD"> SGD - Singapore Dollar (S$) </MenuItem>
-                                <MenuItem value="AED"> AED - UAE Dirham (AED) </MenuItem>
-                                <MenuItem value="CNY"> CNY - Chinese Yuan (¥) </MenuItem>
+                            <Select
+                                name="currency"
+                                value={
+                                    profile.currency
+                                }
+                                label="Currency"
+                                onChange={
+                                    handleProfileChange
+                                }
+                            >
+
+                                <MenuItem value="INR">
+                                    INR - Indian Rupee (₹)
+                                </MenuItem>
+
+                                <MenuItem value="USD">
+                                    USD - US Dollar ($)
+                                </MenuItem>
+
+                                <MenuItem value="EUR">
+                                    EUR - Euro (€)
+                                </MenuItem>
+
+                                <MenuItem value="GBP">
+                                    GBP - British Pound (£)
+                                </MenuItem>
+
+                                <MenuItem value="JPY">
+                                    JPY - Japanese Yen (¥)
+                                </MenuItem>
+
+                                <MenuItem value="CAD">
+                                    CAD - Canadian Dollar (C$)
+                                </MenuItem>
+
+                                <MenuItem value="AUD">
+                                    AUD - Australian Dollar (A$)
+                                </MenuItem>
+
+                                <MenuItem value="CHF">
+                                    CHF - Swiss Franc (CHF)
+                                </MenuItem>
+
+                                <MenuItem value="SGD">
+                                    SGD - Singapore Dollar (S$)
+                                </MenuItem>
+
+                                <MenuItem value="AED">
+                                    AED - UAE Dirham (AED)
+                                </MenuItem>
+
+                                <MenuItem value="CNY">
+                                    CNY - Chinese Yuan (¥)
+                                </MenuItem>
+
                             </Select>
 
                         </FormControl>
 
 
-                        {/* SAVE */}
+                        {/* SAVE PROFILE */}
 
                         <Box
                             sx={{
@@ -809,31 +874,32 @@ function Settings() {
 
                                 slotProps={{
                                     input: {
-                                    endAdornment: (
+                                        endAdornment: (
 
-                                        <InputAdornment
-                                            position="end"
-                                        >
-
-                                            <IconButton
-                                                onClick={() =>
-                                                    setShowCurrentPassword(
-                                                        (previous) =>
-                                                            !previous
-                                                    )
-                                                }
-
-                                                edge="end"
+                                            <InputAdornment
+                                                position="end"
                                             >
 
-                                                {showCurrentPassword
-                                                    ? <VisibilityOffIcon />
-                                                    : <VisibilityIcon />}
+                                                <IconButton
+                                                    onClick={() =>
+                                                        setShowCurrentPassword(
+                                                            (previous) =>
+                                                                !previous
+                                                        )
+                                                    }
 
-                                            </IconButton>
+                                                    edge="end"
+                                                >
 
-                                        </InputAdornment>
-                                    ),
+                                                    {showCurrentPassword
+                                                        ? <VisibilityOffIcon />
+                                                        : <VisibilityIcon />}
+
+                                                </IconButton>
+
+                                            </InputAdornment>
+
+                                        ),
                                     },
                                 }}
                             />
@@ -872,31 +938,32 @@ function Settings() {
 
                                 slotProps={{
                                     input: {
-                                    endAdornment: (
+                                        endAdornment: (
 
-                                        <InputAdornment
-                                            position="end"
-                                        >
-
-                                            <IconButton
-                                                onClick={() =>
-                                                    setShowNewPassword(
-                                                        (previous) =>
-                                                            !previous
-                                                    )
-                                                }
-
-                                                edge="end"
+                                            <InputAdornment
+                                                position="end"
                                             >
 
-                                                {showNewPassword
-                                                    ? <VisibilityOffIcon />
-                                                    : <VisibilityIcon />}
+                                                <IconButton
+                                                    onClick={() =>
+                                                        setShowNewPassword(
+                                                            (previous) =>
+                                                                !previous
+                                                        )
+                                                    }
 
-                                            </IconButton>
+                                                    edge="end"
+                                                >
 
-                                        </InputAdornment>
-                                    ),
+                                                    {showNewPassword
+                                                        ? <VisibilityOffIcon />
+                                                        : <VisibilityIcon />}
+
+                                                </IconButton>
+
+                                            </InputAdornment>
+
+                                        ),
                                     },
                                 }}
                             />
@@ -933,31 +1000,32 @@ function Settings() {
 
                                 slotProps={{
                                     input: {
-                                    endAdornment: (
+                                        endAdornment: (
 
-                                        <InputAdornment
-                                            position="end"
-                                        >
-
-                                            <IconButton
-                                                onClick={() =>
-                                                    setShowConfirmPassword(
-                                                        (previous) =>
-                                                            !previous
-                                                    )
-                                                }
-
-                                                edge="end"
+                                            <InputAdornment
+                                                position="end"
                                             >
 
-                                                {showConfirmPassword
-                                                    ? <VisibilityOffIcon />
-                                                    : <VisibilityIcon />}
+                                                <IconButton
+                                                    onClick={() =>
+                                                        setShowConfirmPassword(
+                                                            (previous) =>
+                                                                !previous
+                                                        )
+                                                    }
 
-                                            </IconButton>
+                                                    edge="end"
+                                                >
 
-                                        </InputAdornment>
-                                    ),
+                                                    {showConfirmPassword
+                                                        ? <VisibilityOffIcon />
+                                                        : <VisibilityIcon />}
+
+                                                </IconButton>
+
+                                            </InputAdornment>
+
+                                        ),
                                     },
                                 }}
                             />
@@ -1032,9 +1100,26 @@ function Settings() {
 
             </Card>
 
+
+            {/* ==========================================
+                NOTIFICATION SETTINGS
+            ========================================== */}
+
+            <Box
+                sx={{
+                    maxWidth: 800,
+                    mt: 3,
+                }}
+            >
+
+                <NotificationSettings />
+
+            </Box>
+
         </Box>
 
     );
+
 }
 
 

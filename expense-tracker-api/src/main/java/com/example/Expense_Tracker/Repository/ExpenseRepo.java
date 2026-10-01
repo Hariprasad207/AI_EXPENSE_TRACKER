@@ -84,4 +84,15 @@ public interface ExpenseRepo extends JpaRepository<Expense,Long>, JpaSpecificati
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("""
+    SELECT COUNT(e)
+    FROM Expense e
+    WHERE e.userId = :userId
+      AND e.expenseDate = :expenseDate
+""")
+    long countExpensesForUserOnDate(
+            @Param("userId") Long userId,
+            @Param("expenseDate") LocalDate expenseDate
+    );
 }

@@ -15,6 +15,9 @@ export const getNotificationIcon = (type) => {
         case "AI_INSIGHT":
             return <AutoAwesomeIcon color="secondary" />;
 
+        case "EXPENSE_REMINDER":
+            return <EditNoteIcon color="primary" />;
+
         case "REMINDER":
             return <AccessTimeIcon color="primary" />;
 
@@ -24,6 +27,7 @@ export const getNotificationIcon = (type) => {
         default:
             return <NotificationsIcon />;
 
+
     }
 
 };
@@ -32,12 +36,14 @@ export const getNotificationIcon = (type) => {
 export const getNotificationLabel = (type) => {
 
     switch (type) {
-
         case "BUDGET_ALERT":
             return "Budget Alert";
 
         case "AI_INSIGHT":
             return "AI Insight";
+
+        case "EXPENSE_REMINDER":
+            return "Expense Reminder";
 
         case "REMINDER":
             return "Reminder";
@@ -47,7 +53,6 @@ export const getNotificationLabel = (type) => {
 
         default:
             return "Notification";
-
     }
 
 };

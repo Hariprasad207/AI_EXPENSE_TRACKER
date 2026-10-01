@@ -4,6 +4,7 @@ import com.example.Expense_Tracker.entity.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,5 +36,12 @@ public interface NotificationRepo extends JpaRepository<Notification, Long> {
             Integer month,
             Integer year,
             Integer alertThreshold
+    );
+
+    boolean existsByUserIdAndTypeAndCreatedAtBetween(
+            Long userId,
+            Notification.NotificationType type,
+            OffsetDateTime start,
+            OffsetDateTime now
     );
 }

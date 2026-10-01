@@ -53,7 +53,8 @@ public class Notification {
         REMINDER,
         BUDGET_ALERT,
         AI_INSIGHT,
-        SYSTEM
+        SYSTEM,
+        EXPENSE_REMINDER
     }
 
     @PrePersist
