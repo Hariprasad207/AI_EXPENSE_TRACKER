@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -25,7 +25,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import dayjs from "dayjs";
 
 import {
     getExpenses,
@@ -99,7 +98,7 @@ function ExpenseList() {
     }, []);
 
 
-    const loadExpenses = async () => {
+    const loadExpenses = useCallback(async () => {
 
         try {
 
@@ -132,16 +131,17 @@ function ExpenseList() {
             setLoading(false);
 
         }
-    };
+    }, [page, rowsPerPage, appliedFilters]);
 
     useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadExpenses();
+        }, 0);
 
-        loadExpenses();
+        return () => window.clearTimeout(timeoutId);
 
     }, [
-        page,
-        rowsPerPage,
-        appliedFilters,
+        loadExpenses,
     ]);
 
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -48,7 +48,7 @@ function BudgetList() {
     // LOAD BUDGETS
     // =========================================================
 
-    const loadBudgets = async () => {
+    const loadBudgets = useCallback(async () => {
 
         try {
 
@@ -127,7 +127,7 @@ function BudgetList() {
 
         }
 
-    };
+    }, [month, year]);
 
 
     // =========================================================
@@ -135,10 +135,13 @@ function BudgetList() {
     // =========================================================
 
     useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadBudgets();
+        }, 0);
 
-        loadBudgets();
+        return () => window.clearTimeout(timeoutId);
 
-    }, [month, year]);
+    }, [loadBudgets]);
 
 
     // =========================================================

@@ -30,10 +30,6 @@ function NotificationSettings() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    useEffect(() => {
-        loadSettings();
-    }, []);
-
     const loadSettings = async () => {
         try {
             setLoading(true);
@@ -59,6 +55,14 @@ function NotificationSettings() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadSettings();
+        }, 0);
+
+        return () => window.clearTimeout(timeoutId);
+    }, []);
 
     const handleToggle = (event) => {
         const { name, checked } = event.target;
@@ -282,8 +286,10 @@ function NotificationSettings() {
                     value={settings.reminderTime}
                     onChange={handleTimeChange}
                     fullWidth
-                    InputLabelProps={{
-                        shrink: true,
+                    slotProps={{
+                        inputLabel: {
+                            shrink: true,
+                        },
                     }}
                     helperText="Time at which your expense reminder can be sent."
                     sx={{

@@ -1,4 +1,5 @@
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SettingsIcon from "@mui/icons-material/Settings";

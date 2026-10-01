@@ -73,8 +73,11 @@ function NotificationList() {
 
 
     useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadNotifications();
+        }, 0);
 
-        loadNotifications();
+        return () => window.clearTimeout(timeoutId);
 
     }, []);
 

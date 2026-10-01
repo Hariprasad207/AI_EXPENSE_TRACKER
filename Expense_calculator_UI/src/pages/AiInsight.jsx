@@ -8,7 +8,6 @@ import {
     CardContent,
     Chip,
     CircularProgress,
-    Divider,
     IconButton,
     Stack,
     Tooltip,
@@ -77,8 +76,11 @@ function AiInsights() {
     ========================= */
 
     useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadInsights();
+        }, 0);
 
-        loadInsights();
+        return () => window.clearTimeout(timeoutId);
 
     }, []);
 
@@ -505,7 +507,7 @@ function AiInsights() {
                                             direction="row"
                                             spacing={1}
                                             alignItems="center"
-                                            flexWrap="wrap"
+                                            sx={{ flexWrap: "wrap" }}
                                         >
 
                                             <Typography

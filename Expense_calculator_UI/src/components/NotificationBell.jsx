@@ -98,8 +98,11 @@ function NotificationBell() {
 
 
     useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadUnreadCount();
+        }, 0);
 
-        loadUnreadCount();
+        return () => window.clearTimeout(timeoutId);
 
     }, []);
 

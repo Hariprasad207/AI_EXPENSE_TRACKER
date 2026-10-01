@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -33,7 +33,6 @@ import {
     AdapterDayjs,
 } from "@mui/x-date-pickers/AdapterDayjs";
 
-import dayjs from "dayjs";
 
 import {
     getIncome,
@@ -155,7 +154,7 @@ function IncomeList() {
     // LOAD INCOME
     // =========================================================
 
-    const loadIncome = async () => {
+    const loadIncome = useCallback(async () => {
 
         try {
 
@@ -199,7 +198,7 @@ function IncomeList() {
 
         }
 
-    };
+    }, [page, rowsPerPage, appliedFilters]);
 
 
     // =========================================================
@@ -207,13 +206,14 @@ function IncomeList() {
     // =========================================================
 
     useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadIncome();
+        }, 0);
 
-        loadIncome();
+        return () => window.clearTimeout(timeoutId);
 
     }, [
-        page,
-        rowsPerPage,
-        appliedFilters,
+        loadIncome,
     ]);
 
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
     Box,
@@ -104,19 +104,10 @@ function Dashboard() {
 
 
     /* =====================================================
-       LOAD DASHBOARD WHEN MONTH/YEAR CHANGES
-    ===================================================== */
-
-    useEffect(() => {
-        loadDashboard();
-    }, [month, year]);
-
-
-    /* =====================================================
        LOAD DASHBOARD DATA
     ===================================================== */
 
-    const loadDashboard = async () => {
+    const loadDashboard = useCallback(async () => {
 
         try {
 
@@ -143,7 +134,20 @@ function Dashboard() {
 
             setLoading(false);
         }
-    };
+    }, [month, year]);
+
+
+    /* =====================================================
+       LOAD DASHBOARD WHEN MONTH/YEAR CHANGES
+    ===================================================== */
+
+    useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadDashboard();
+        }, 0);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [loadDashboard]);
 
 
     /* =====================================================

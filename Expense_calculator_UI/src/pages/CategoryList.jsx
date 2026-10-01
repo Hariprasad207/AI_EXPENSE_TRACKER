@@ -78,8 +78,11 @@ function CategoryList() {
 
 
     useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void loadCategories();
+        }, 0);
 
-        loadCategories();
+        return () => window.clearTimeout(timeoutId);
 
     }, []);
 

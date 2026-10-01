@@ -288,22 +288,6 @@ function AIChatBox() {
     // DELETE CURRENT CONVERSATION
     // --------------------------------------------------
 
-    const requestDeleteCurrent = () => {
-
-        if (!conversationId) {
-            return;
-        }
-
-
-        setDeleteType("CURRENT");
-
-        setDeleteError("");
-
-        setDeleteDialogOpen(true);
-
-    };
-
-
     // --------------------------------------------------
     // DELETE ALL CONVERSATIONS
     // --------------------------------------------------
