@@ -1,23 +1,16 @@
-Yes. The current README is a good starting point, but for a **portfolio-level GitHub project**, it should explain not only *what* the application does, but also **architecture, authentication, database design, AI functionality, notification system, API structure, setup, configuration, testing, and project workflow**.
-
-Also, remove those `[svg](...)` lines. They are broken/unnecessary Markdown links. GitHub automatically generates the table of contents/anchor links for headings.
-
-Below is a much more complete `README.md` tailored to your actual project.
-
-````markdown
 # 💰 AI Expense Tracker
 
-An AI-powered personal finance management application designed to help users track expenses, manage income, set budgets, receive financial notifications, and understand their spending through AI-powered insights.
+An AI-powered personal finance management application built with **Spring Boot, React, PostgreSQL, and Ollama**.
 
-The application is built with a **Spring Boot REST API**, **React frontend**, **PostgreSQL database**, and **Ollama-based AI integration**.
+AI Expense Tracker helps users manage their personal finances by tracking expenses and income, managing categories and monthly budgets, receiving financial notifications, and generating AI-powered financial insights.
 
 ---
 
 ## 📌 Overview
 
-Managing personal expenses manually can make it difficult to understand spending patterns, monitor budgets, and identify unnecessary expenses.
+AI Expense Tracker is a full-stack personal finance management application designed to provide users with a centralized platform for managing and understanding their financial activity.
 
-**AI Expense Tracker** provides a centralized platform where users can:
+The application allows users to:
 
 - Track daily expenses and income
 - Organize transactions using categories
@@ -28,9 +21,9 @@ Managing personal expenses manually can make it difficult to understand spending
 - Generate AI-powered financial insights
 - Interact with an AI financial assistant
 - Analyze daily and monthly financial activity
-- Manage account and notification settings securely
+- Manage profile and notification settings securely
 
-The application follows a **frontend + REST API + database architecture**, with AI services integrated into the backend.
+The application follows a **React frontend + Spring Boot REST API + PostgreSQL database** architecture with AI functionality integrated through Ollama.
 
 ---
 
@@ -41,14 +34,14 @@ The application follows a **frontend + REST API + database architecture**, with 
 - User registration
 - User login
 - JWT-based authentication
-- Protected API endpoints
+- Protected REST API endpoints
 - BCrypt password hashing
 - Change password
 - Forgot password functionality
 - OTP-based password reset verification
 - Password reset token validation
-- Single-use password reset tokens
 - Token expiration handling
+- OTP attempt handling
 - Input validation
 - User-specific data access
 
@@ -58,23 +51,21 @@ The application follows a **frontend + REST API + database architecture**, with 
 
 Users can manage their expenses through a complete CRUD workflow.
 
-### Supported operations
+### Supported Operations
 
-- Add an expense
+- Add expense
 - View expenses
-- Update an expense
-- Delete an expense
-- Filter expenses
+- Update expense
+- Delete expense
 - Search expenses
+- Filter expenses
 - Filter by category
 - Filter by payment method
 - Filter by date
 - View expense totals
 - View category-wise spending
 
-### Payment methods
-
-The application supports:
+### Payment Methods
 
 - Cash
 - Credit Card
@@ -86,9 +77,9 @@ The application supports:
 
 ## 💵 Income Management
 
-Users can also maintain their income records.
+Users can maintain their income records and track their financial inflow.
 
-Supported functionality includes:
+### Supported Operations
 
 - Add income
 - View income
@@ -102,7 +93,7 @@ Supported functionality includes:
 
 ## 🏷️ Category Management
 
-The application supports expense and income categorization.
+The application supports categorization of financial transactions.
 
 Users can:
 
@@ -112,19 +103,19 @@ Users can:
 - Delete categories
 - Filter transactions by category
 
-The category system also supports separating system-defined categories from user-created categories.
+The category system supports both predefined categories and user-created custom categories.
 
 ---
 
 ## 🎯 Budget Management
 
-Users can define monthly budgets for their spending categories.
+Users can create monthly budgets to control their spending.
 
-Budget functionality includes:
+### Budget Features
 
 - Create monthly budgets
 - Set category-specific spending limits
-- View current budgets
+- View budgets
 - Update budgets
 - Delete budgets
 - Monitor spending against budget limits
@@ -134,16 +125,16 @@ Budget functionality includes:
 
 ## 🔔 Notification System
 
-The application contains a notification system for important financial events.
+The application provides notifications for important financial events.
 
-Supported notification types include:
+### Notification Types
 
 - Budget alerts
 - AI insights
 - Expense reminders
 - System notifications
 
-Users can:
+### Notification Features
 
 - View notifications
 - View unread notification count
@@ -162,25 +153,25 @@ The reminder system:
 
 1. Checks whether expense reminders are enabled.
 2. Checks the user's configured reminder time.
-3. Checks whether the user has recorded an expense for the current day.
-4. Creates an expense reminder when required.
-5. Prevents duplicate reminders from being created for the same day.
+3. Checks whether an expense has been recorded for the current day.
+4. Creates a reminder when required.
+5. Prevents duplicate reminders for the same day.
 
-This functionality is implemented using a scheduled backend task.
+The reminder functionality is implemented using a scheduled backend service.
 
 ---
 
 ## 🚨 Budget Alerts
 
-The application monitors configured budgets and generates notifications when spending reaches important thresholds.
+The application monitors configured budgets and generates notifications when spending reaches defined thresholds.
 
-The alert system supports thresholds such as:
+Supported alert thresholds include:
 
 - 80%
 - 90%
 - 100%
 
-Duplicate alerts for the same threshold and period are prevented.
+Duplicate alerts for the same budget threshold and period are prevented.
 
 ---
 
@@ -188,17 +179,17 @@ Duplicate alerts for the same threshold and period are prevented.
 
 ## 🧠 AI-Powered Financial Insights
 
-The application can generate financial insights based on the user's financial activity.
+The application generates AI-powered insights based on the user's financial activity.
 
-Insights can be generated for different periods, including:
+Insights can be generated for:
 
-- Daily
-- Weekly
-- Monthly
+- Daily activity
+- Weekly activity
+- Monthly activity
 
-The AI insight system analyzes relevant financial information and produces user-oriented insights.
+The AI insight system analyzes relevant financial information and generates user-oriented financial insights.
 
-Generated insights can also be connected to the application's notification system.
+AI-generated insights can also be delivered through the application's notification system.
 
 ---
 
@@ -214,25 +205,29 @@ The AI assistant can work with financial context such as:
 - Categories
 - Spending patterns
 
-The application maintains AI conversation/history functionality so users can continue their financial discussions.
+The application also maintains AI conversation history so users can continue their financial discussions.
 
 ---
 
 ## 🦙 Ollama Integration
 
-The AI functionality is designed around **Ollama**, allowing the application to communicate with a locally hosted AI model.
+AI functionality is integrated using **Ollama**, allowing the application to communicate with a locally hosted AI model.
 
-This architecture allows the AI functionality to be integrated without requiring the application's core financial data to be sent directly to a third-party hosted AI API.
+The Ollama integration is used for:
 
-> The exact Ollama model and local configuration should be configured according to the development environment.
+- Financial insights
+- AI-powered financial conversations
+- Context-aware financial assistance
+
+The exact Ollama model can be configured according to the development environment.
 
 ---
 
 # 📊 Dashboard
 
-The dashboard provides an overview of the user's financial activity.
+The dashboard provides a centralized overview of the user's financial activity.
 
-It is designed to provide information such as:
+It includes information such as:
 
 - Recent expenses
 - Recent income
@@ -243,53 +238,49 @@ It is designed to provide information such as:
 - Financial trends
 - AI-generated insights
 
-The dashboard acts as the central overview of the user's financial activity.
-
 ---
 
 # 👤 User Profile & Settings
 
-Users can manage their account information through the settings section.
+Users can manage their account and application preferences through the settings section.
 
 Supported functionality includes:
 
 - View profile
-- Update profile information
+- Update profile
 - Change password
-- Configure notification settings
-- Configure expense reminder settings
-- Configure AI insight settings
-- Configure budget alert settings
-- Configure system notification settings
+- Configure expense reminders
+- Configure budget alerts
+- Configure AI insight notifications
+- Configure system notifications
 - Configure reminder time
 
 ---
 
 # 🏗️ System Architecture
 
-The application follows a layered full-stack architecture.
+The application follows a full-stack architecture:
 
 ```text
-                         ┌──────────────────────┐
-                         │       React UI       │
-                         │      Frontend        │
-                         └──────────┬───────────┘
-                                    │
-                                    │ REST API
-                                    │ Axios
-                                    ▼
-                         ┌──────────────────────┐
-                         │    Spring Boot API   │
-                         │      Backend         │
-                         └──────────┬───────────┘
-                                    │
-              ┌─────────────────────┼─────────────────────┐
-              │                     │                     │
-              ▼                     ▼                     ▼
-       ┌─────────────┐       ┌─────────────┐       ┌─────────────┐
-       │ PostgreSQL  │       │ JWT Security│       │   Ollama    │
-       │  Database   │       │             │       │     AI      │
-       └─────────────┘       └─────────────┘       └─────────────┘
+                    ┌──────────────────────┐
+                    │      React UI        │
+                    │      Frontend        │
+                    └──────────┬───────────┘
+                               │
+                               │ Axios / REST API
+                               ▼
+                    ┌──────────────────────┐
+                    │   Spring Boot API    │
+                    │      Backend         │
+                    └──────────┬───────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              │                │                │
+              ▼                ▼                ▼
+       ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+       │ PostgreSQL  │  │    JWT      │  │   Ollama    │
+       │  Database   │  │  Security   │  │     AI      │
+       └─────────────┘  └─────────────┘  └─────────────┘
 ````
 
 ---
@@ -302,7 +293,7 @@ The application follows a layered full-stack architecture.
 | ------------------ | -------------------------------- |
 | Java 25            | Backend programming language     |
 | Spring Boot        | Backend application framework    |
-| Spring MVC / Web   | REST API development             |
+| Spring Web         | REST API development             |
 | Spring Data JPA    | Database access                  |
 | Spring Security    | Authentication and authorization |
 | PostgreSQL         | Relational database              |
@@ -310,24 +301,20 @@ The application follows a layered full-stack architecture.
 | BCrypt             | Password hashing                 |
 | Lombok             | Boilerplate reduction            |
 | Jakarta Validation | Request validation               |
-| Spring Mail        | Email/OTP functionality          |
-| Maven              | Dependency and build management  |
-
----
+| Spring Mail        | Email and OTP functionality      |
+| Maven              | Build and dependency management  |
 
 ## Frontend
 
-| Technology   | Purpose                            |
-| ------------ | ---------------------------------- |
-| React        | Frontend framework                 |
-| Vite         | Frontend build tool                |
-| React Router | Client-side routing                |
-| Material UI  | UI components                      |
-| Axios        | HTTP API communication             |
-| Recharts     | Financial charts and visualization |
-| Day.js       | Date/time handling                 |
-
----
+| Technology   | Purpose                           |
+| ------------ | --------------------------------- |
+| React        | Frontend framework                |
+| Vite         | Build tool and development server |
+| React Router | Client-side routing               |
+| Material UI  | UI components                     |
+| Axios        | HTTP API communication            |
+| Recharts     | Financial data visualization      |
+| Day.js       | Date and time handling            |
 
 ## AI
 
@@ -345,35 +332,25 @@ The application follows a layered full-stack architecture.
 AI_EXPENSE_TRACKER/
 │
 ├── expense-tracker-api/
-│   │
 │   ├── .mvn/
 │   │   └── wrapper/
-│   │
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/
-│   │   │   │   └── ...
-│   │   │   │
 │   │   │   └── resources/
-│   │   │       └── application.properties
-│   │   │
 │   │   └── test/
-│   │
 │   ├── mvnw
 │   ├── mvnw.cmd
 │   └── pom.xml
 │
 ├── Expense_calculator_UI/
-│   │
 │   ├── public/
 │   ├── src/
 │   │   ├── api/
 │   │   ├── components/
 │   │   ├── context/
 │   │   ├── pages/
-│   │   ├── utils/
-│   │   └── ...
-│   │
+│   │   └── utils/
 │   ├── package.json
 │   ├── vite.config.js
 │   └── eslint.config.js
@@ -386,9 +363,9 @@ AI_EXPENSE_TRACKER/
 
 # 🗄️ Database
 
-The backend uses **PostgreSQL** as the primary relational database.
+The application uses **PostgreSQL** as its relational database.
 
-The application contains data structures for areas such as:
+The main areas of the database include:
 
 * Users
 * User reminder settings
@@ -399,7 +376,7 @@ The application contains data structures for areas such as:
 * Notifications
 * AI insights
 
-The application uses **Spring Data JPA / Hibernate** for object-relational mapping.
+The backend uses **Spring Data JPA and Hibernate** for object-relational mapping.
 
 ---
 
@@ -407,41 +384,35 @@ The application uses **Spring Data JPA / Hibernate** for object-relational mappi
 
 The application uses JWT-based authentication.
 
-A simplified authentication flow is:
-
 ```text
 User
- │
- │ Login
- ▼
+  │
+  │ Login
+  ▼
 React Frontend
- │
- │ POST /api/auth/login
- ▼
+  │
+  │ POST /api/auth/login
+  ▼
 Spring Boot
- │
- ├── Validate credentials
- │
- ├── Verify BCrypt password
- │
- └── Generate JWT
- │
- ▼
+  │
+  ├── Validate credentials
+  ├── Verify BCrypt password
+  └── Generate JWT
+  │
+  ▼
 React Frontend
- │
- └── Store authentication information
-        │
-        ▼
-   Protected API requests
-        │
-        ▼
-   JWT Authentication Filter
-        │
-        ▼
-   Spring Security
-        │
-        ▼
-   Authorized Controller
+  │
+  ▼
+Protected API Requests
+  │
+  ▼
+JWT Authentication
+  │
+  ▼
+Spring Security
+  │
+  ▼
+Authorized Controller
 ```
 
 ---
@@ -452,84 +423,82 @@ The forgot-password functionality uses OTP verification.
 
 ```text
 User
- │
- │ Forgot Password
- ▼
+  │
+  ▼
+Forgot Password
+  │
+  ▼
 Enter Email
- │
- ▼
-Backend
- │
- ├── Generate OTP
- ├── Hash OTP
- ├── Store OTP/expiry information
- └── Send OTP through email
- │
- ▼
-User enters OTP
- │
- ▼
+  │
+  ▼
+Spring Boot
+  │
+  ├── Generate OTP
+  ├── Hash OTP
+  ├── Store OTP and expiry
+  └── Send OTP through email
+  │
+  ▼
+User Enters OTP
+  │
+  ▼
 OTP Verification
- │
- ├── Validate OTP
- ├── Check expiration
- └── Check attempts
- │
- ▼
-Generate password reset token
- │
- ▼
+  │
+  ├── Validate OTP
+  ├── Check expiration
+  └── Check attempts
+  │
+  ▼
+Password Reset Token
+  │
+  ▼
 Reset Password
- │
- ▼
-BCrypt hash new password
- │
- ▼
-Password updated
+  │
+  ▼
+BCrypt Password Hashing
+  │
+  ▼
+Password Updated
 ```
 
 ---
 
 # 🔔 Notification Architecture
 
-Notifications are generated by backend services based on financial events and scheduled checks.
-
 ```text
-                    Backend
-                       │
-        ┌──────────────┼──────────────┐
-        │              │              │
-        ▼              ▼              ▼
-   Budget Alert   AI Insight     Expense Reminder
-        │              │              │
-        └──────────────┼──────────────┘
-                       ▼
-              Notification Service
-                       │
-                       ▼
-                Notification DB
-                       │
-                       ▼
-                 React Frontend
-                       │
-                       ▼
-                Notification Bell
+                     Backend
+                        │
+          ┌─────────────┼─────────────┐
+          │             │             │
+          ▼             ▼             ▼
+    Budget Alerts   AI Insights   Expense Reminders
+          │             │             │
+          └─────────────┼─────────────┘
+                        ▼
+               Notification Service
+                        │
+                        ▼
+                PostgreSQL Database
+                        │
+                        ▼
+                  React Frontend
+                        │
+                        ▼
+                 Notification Bell
 ```
 
 ---
 
 # ⏱️ Scheduled Tasks
 
-The backend uses scheduled services for automated financial operations.
-
-Examples include:
+The backend uses scheduled services for automated operations such as:
 
 * Expense reminder checks
 * Daily AI insight generation
 * Weekly AI insight generation
 * Budget alert processing
 
-Scheduled operations respect the user's notification and reminder settings.
+Scheduled operations respect the user's configured notification and reminder settings.
 
 ---
 
@@ -537,7 +506,7 @@ Scheduled operations respect the user's notification and reminder settings.
 
 ## Prerequisites
 
-Make sure the following are installed:
+Install the following:
 
 * Java 25
 * PostgreSQL
@@ -550,21 +519,9 @@ Verify the installations:
 
 ```bash
 java -version
-```
-
-```bash
 node --version
-```
-
-```bash
 npm --version
-```
-
-```bash
 git --version
-```
-
-```bash
 ollama --version
 ```
 
@@ -574,7 +531,7 @@ ollama --version
 
 Create a PostgreSQL database for the application.
 
-For example:
+Example:
 
 ```sql
 CREATE DATABASE ai_expense_tracker;
@@ -582,13 +539,13 @@ CREATE DATABASE ai_expense_tracker;
 
 Configure the database connection in the backend's local configuration.
 
-> Do not commit database passwords or other sensitive configuration to GitHub.
+> Never commit database passwords or other sensitive credentials to GitHub.
 
 ---
 
 # 🔐 Backend Configuration
 
-The backend uses an `application.properties` file for environment-specific configuration.
+The backend uses `application.properties` for environment-specific configuration.
 
 Typical configuration areas include:
 
@@ -610,27 +567,17 @@ spring.mail.password=...
 ...
 ```
 
-The actual configuration file should remain local and should **not be committed to GitHub**.
-
-The repository `.gitignore` excludes:
-
-```text
-application.properties
-.env
-.env.*
-```
+The actual configuration file should remain local and must not be committed to GitHub.
 
 ---
 
 # 🚀 Running the Backend
 
-Navigate to the backend:
+Navigate to the backend directory:
 
 ```powershell
 cd expense-tracker-api
 ```
-
-Run using the Maven Wrapper.
 
 ### Windows
 
@@ -648,7 +595,7 @@ Run using the Maven Wrapper.
 
 # 🎨 Running the Frontend
 
-Navigate to the frontend:
+Navigate to the frontend directory:
 
 ```bash
 cd Expense_calculator_UI
@@ -666,13 +613,13 @@ Start the development server:
 npm run dev
 ```
 
-Vite will display the local development URL in the terminal.
+Vite will display the development URL in the terminal.
 
 ---
 
 # 🧪 Testing
 
-## Backend Tests
+## Backend
 
 From the backend directory:
 
@@ -688,17 +635,11 @@ From the backend directory:
 ./mvnw clean test
 ```
 
----
-
 ## Frontend Linting
-
-From the frontend directory:
 
 ```bash
 npm run lint
 ```
-
----
 
 ## Frontend Production Build
 
@@ -710,9 +651,9 @@ npm run build
 
 # 📡 API Overview
 
-The backend exposes REST APIs for the application's main features.
+The backend provides REST APIs for the application's major features.
 
-Major API areas include:
+Main API areas include:
 
 ```text
 /api/auth
@@ -726,7 +667,7 @@ Major API areas include:
 /api/ai
 ```
 
-Examples of authentication functionality include:
+### Authentication APIs
 
 ```text
 POST /api/auth/login
@@ -735,7 +676,7 @@ POST /api/auth/verify-otp
 POST /api/auth/reset-password
 ```
 
-User-related functionality includes:
+### User APIs
 
 ```text
 GET  /api/users/me
@@ -743,13 +684,13 @@ PUT  /api/users/me
 PUT  /api/users/change-password
 ```
 
-> API endpoints may evolve as the application continues to be developed.
+> API endpoints may evolve as development continues.
 
 ---
 
-# 🔒 Security Considerations
+# 🔒 Security
 
-The application implements several security measures:
+The application implements:
 
 * JWT-based authentication
 * Spring Security
@@ -762,122 +703,18 @@ The application implements several security measures:
 * Single-use reset tokens
 * Request validation
 * User-specific data access
-* Sensitive configuration excluded from Git
+* Sensitive configuration exclusion
 
-Secrets such as:
+Sensitive values such as database passwords, JWT secrets, email credentials, and API keys should always be supplied through local or environment-specific configuration.
 
-* Database passwords
-* JWT secrets
-* Email credentials
-* API keys
-
-should always be supplied through local/environment-specific configuration.
-
----
-
-# 📈 Future Improvements
-
-Potential future improvements include:
-
-* Docker and Docker Compose support
-* CI/CD pipeline
-* Cloud deployment
-* Automated backend testing with broader test coverage
-* Frontend component testing
-* API documentation using OpenAPI/Swagger
-* Improved AI financial recommendations
-* Advanced spending predictions
-* More detailed financial reports
-* Export transactions to CSV/PDF
-* Improved dashboard visualizations
-* Database migration management
-* Production monitoring and logging
-
----
-
-# 🧪 Current Development Status
-
-The project currently includes:
-
-* ✅ Authentication
-* ✅ JWT security
-* ✅ User profile management
-* ✅ Password change
-* ✅ Forgot password with OTP
-* ✅ Expense CRUD
-* ✅ Income management
-* ✅ Category management
-* ✅ Budget management
-* ✅ Budget alerts
-* ✅ Expense reminders
-* ✅ Notification system
-* ✅ AI financial insights
-* ✅ AI chat assistant
-* ✅ PostgreSQL integration
-* ✅ React frontend
-* ✅ Spring Boot REST API
-* ✅ Backend Maven Wrapper
-* ✅ Frontend ESLint validation
-* ✅ Production frontend build
-
----
-
-# 📸 Screenshots
-
-Screenshots can be added here to demonstrate the application's main interfaces.
-
-Recommended screenshots:
-
-1. Login page
-2. Registration page
-3. Dashboard
-4. Expense list
-5. Add expense
-6. Budget management
-7. AI insights
-8. AI chat
-9. Notifications
-10. User settings
-
-Example:
-
-```markdown
-## Dashboard
-
-![Dashboard Screenshot](screenshots/dashboard.png)
-```
-
----
-
-# 🤝 Development Workflow
-
-The project is organized as a full-stack application with independent frontend and backend development.
-
-```text
-React Frontend
-      │
-      │ Axios
-      ▼
-Spring Boot REST API
-      │
-      ├── Spring Security
-      ├── Business Services
-      ├── Scheduled Services
-      ├── AI Integration
-      │
-      ▼
-PostgreSQL
-```
-
----
 
 # 👨‍💻 Author
 
 ## Hariprasad N
 
-B.Tech – Computer Science and Business Systems
+**B.Tech – Computer Science and Business Systems**
 
-Interested in:
+Areas of interest:
 
 * Full-Stack Development
 * Backend Engineering
@@ -887,51 +724,3 @@ Interested in:
 * PostgreSQL
 * AI-integrated applications
 
----
-
-# 📄 License
-
-This project is currently intended as a personal/portfolio project.
-
-````
-
-### A couple of important corrections
-
-Your current file is named **`ReadMe.md`**, while the standard GitHub convention is:
-
-```text
-README.md
-````
-
-I recommend renaming it to exactly:
-
-```text
-README.md
-```
-
-Also, don't manually add those lines such as:
-
-```markdown
-[svg](https://github.com/...)
-```
-
-GitHub automatically makes the headings navigable. For example:
-
-```markdown
-## 🚀 Features
-```
-
-will automatically have its own anchor.
-
-### One more thing I'd recommend
-
-Your README will become **much stronger visually** if we add:
-
-1. **Project screenshots**
-2. **Architecture diagram**
-3. **Database ER diagram**
-4. **Live demo link**, if you deploy it
-5. **API documentation**
-6. **Badges** for Java/Spring Boot/React/PostgreSQL/build status
-
-Since this is intended to be your portfolio project, I would do those **after we get this README committed**, rather than making the README unnecessarily complicated right now.
