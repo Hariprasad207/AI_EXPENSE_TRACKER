@@ -619,35 +619,72 @@ Vite will display the development URL in the terminal.
 
 # 🧪 Testing
 
-## Backend
+The project includes automated backend tests and frontend quality checks to help verify application behavior and prevent regressions.
 
-From the backend directory:
+## Backend Tests
 
-### Windows
+The backend test suite covers the following areas:
+
+- **JWT authentication:** JWT service and authentication filter behavior.
+- **Security integration:** Authentication and protected endpoint behavior.
+- **Controller tests:** Expense and user registration endpoints.
+- **Service tests:** Authentication, budget, and expense business logic.
+- **Repository tests:** Database operations for users, expenses, income, budgets, categories, notifications, AI insights, and AI chat history.
+- **Exception handling:** Global API exception handling.
+
+### Test Database
+
+Backend tests use a dedicated test configuration with an H2 in-memory database. This separates test database operations from the application's PostgreSQL database.
+
+### Run Backend Tests
+
+**Windows (PowerShell):**
 
 ```powershell
+cd expense-tracker-api
 .\mvnw.cmd clean test
 ```
 
-### Linux / macOS
+**Linux / macOS:**
 
 ```bash
+cd expense-tracker-api
 ./mvnw clean test
 ```
 
-## Frontend Linting
+### Latest Verified Backend Test Result
+
+The latest recorded full test run completed successfully:
+
+- Tests run: 152
+- Failures: 0
+- Errors: 0
+- Skipped: 0
+
+These results reflect the local test run and may vary if the code or environment changes.
+
+## Frontend Quality Checks
+
+### Run ESLint
 
 ```bash
+cd Expense_calculator_UI
 npm run lint
 ```
 
-## Frontend Production Build
+### Create a Production Build
 
 ```bash
 npm run build
 ```
 
----
+The frontend lint and production build checks completed successfully in the latest local verification.
+
+## Manual Functional Testing
+
+The application was also manually checked for the main user flows, including authentication, dashboard navigation, expense and income management, budgets, categories, notifications, AI insights, and settings.
+
+Automated and manual testing should be repeated after significant application changes.
 
 # 📡 API Overview
 
