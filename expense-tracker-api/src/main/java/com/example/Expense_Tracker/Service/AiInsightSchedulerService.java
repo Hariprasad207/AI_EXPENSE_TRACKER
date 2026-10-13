@@ -22,7 +22,7 @@ public class AiInsightSchedulerService {
         List<Users> users = userRepo.findByIsActiveTrue();
 
         for(Users user:users){
-            Long userId = (long) user.getId();
+            Long userId =  user.getId();
             try{
                 aiInsightService.analyzeMonthlyExpenseChange(userId);
                 aiInsightService.analyzeHighestSpendingCategory(userId);
@@ -47,7 +47,7 @@ public class AiInsightSchedulerService {
         List<Users> users = userRepo.findByIsActiveTrue();
 
         for (Users user : users) {
-            Long userId = (long) user.getId();
+            Long userId = user.getId();
             try {
                 aiInsightService.analyzeSpendingTrend(userId);
                 log.info("Weekly AI insights generated successfully for user {}",userId);

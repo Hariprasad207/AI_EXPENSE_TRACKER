@@ -21,7 +21,7 @@ public class UserService {
 
     private UserProfileResponse mapToResponse(Users user){
         return UserProfileResponse.builder()
-                .id((long)user.getId())
+                .id(user.getId())
                 .fullName(user.getFull_name())
                 .email(user.getEmail())
                 .currency(user.getCurrency())

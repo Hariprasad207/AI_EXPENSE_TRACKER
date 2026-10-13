@@ -1,194 +1,223 @@
 import {
+  lazy,
+  Suspense,
+} from "react";
+
+import {
   BrowserRouter,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
 
+import {
+  Box,
+  CircularProgress,
+} from "@mui/material";
+
 import AppLayout from "./components/layouts/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+// Public pages
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const ForgotPassword = lazy(() => import("./pages/ForgetPassword"));
+const VerifyOtp = lazy(() => import("./pages/VerifyOtp"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
-import Dashboard from "./pages/Dashboard";
+// Dashboard
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 
-import ExpenseList from "./pages/ExpenseList";
-import EditExpense from "./pages/EditExpense";
-import AddExpense from "./pages/AddExpense";
+// Expense pages
+const ExpenseList = lazy(() => import("./pages/ExpenseList"));
+const EditExpense = lazy(() => import("./pages/EditExpense"));
+const AddExpense = lazy(() => import("./pages/AddExpense"));
 
-import IncomeList from "./pages/IncomeList";
-import IncomeForm from "./pages/IncomeForm";
+// Income pages
+const IncomeList = lazy(() => import("./pages/IncomeList"));
+const IncomeForm = lazy(() => import("./pages/IncomeForm"));
 
-import BudgetList from "./pages/BudgetList";
-import BudgetForm from "./pages/BudgetForm";
+// Budget pages
+const BudgetList = lazy(() => import("./pages/BudgetList"));
+const BudgetForm = lazy(() => import("./pages/BudgetForm"));
 
-import NotificationList from "./pages/NotificationList";
+// Other protected pages
+const NotificationList = lazy(
+  () => import("./pages/NotificationList")
+);
 
-import CategoryList from "./pages/CategoryList";
-import CategoryForm from "./pages/CategoryForm";
+const CategoryList = lazy(
+  () => import("./pages/CategoryList")
+);
 
-import AiInsights from "./pages/AiInsight";
+const CategoryForm = lazy(
+  () => import("./pages/CategoryForm")
+);
 
-import Settings from "./pages/Settings";
+const AiInsights = lazy(
+  () => import("./pages/AiInsight")
+);
 
-import ForgotPassword from "./pages/ForgetPassword";
-import VerifyOtp from "./pages/VerifyOtp";
-import ResetPassword from "./pages/ResetPassword";
+const Settings = lazy(
+  () => import("./pages/Settings")
+);
+
+// Displayed while a lazy-loaded page is loading.
+function PageLoading() {
+  return (
+    <Box
+      role="status"
+      aria-label="Loading page"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "60vh",
+      }}
+    >
+      <CircularProgress />
+    </Box>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <Suspense fallback={<PageLoading />}>
+        <Routes>
+          {/* Public routes */}
+          <Route
+            path="/login"
+            element={<Login />}
+          />
 
-        {/* =========================
-            PUBLIC ROUTES
-        ========================== */}
+          <Route
+            path="/register"
+            element={<Register />}
+          />
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword />}
+          />
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
+          <Route
+            path="/verify-otp"
+            element={<VerifyOtp />}
+          />
 
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
+          <Route
+            path="/reset-password"
+            element={<ResetPassword />}
+          />
 
-        <Route
-          path="/verify-otp"
-          element={<VerifyOtp />}
-        />
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route
+                path="/dashboard"
+                element={<Dashboard />}
+              />
 
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
-        />
+              <Route
+                path="/expenses"
+                element={<ExpenseList />}
+              />
 
+              <Route
+                path="/expenses/:id/edit"
+                element={<EditExpense />}
+              />
 
-        {/* =========================
-            PROTECTED ROUTES
-        ========================== */}
+              <Route
+                path="/expenses/new"
+                element={<AddExpense />}
+              />
 
-        <Route element={<ProtectedRoute />}>
+              <Route
+                path="/income"
+                element={<IncomeList />}
+              />
 
-          <Route element={<AppLayout />}>
+              <Route
+                path="/income/new"
+                element={<IncomeForm />}
+              />
 
-            <Route
-              path="/dashboard"
-              element={<Dashboard />}
-            />
+              <Route
+                path="/income/:id/edit"
+                element={<IncomeForm />}
+              />
 
-            <Route
-              path="/expenses"
-              element={<ExpenseList />}
-            />
+              <Route
+                path="/budgets"
+                element={<BudgetList />}
+              />
 
-            <Route
-              path="/expenses/:id/edit"
-              element={<EditExpense />}
-            />
+              <Route
+                path="/budgets/new"
+                element={<BudgetForm />}
+              />
 
-            <Route
-              path="/expenses/new"
-              element={<AddExpense />}
-            />
+              <Route
+                path="/budgets/:id/edit"
+                element={<BudgetForm />}
+              />
 
-            <Route
-              path="/income"
-              element={<IncomeList />}
-            />
+              <Route
+                path="/notifications"
+                element={<NotificationList />}
+              />
 
-            <Route
-              path="/income/new"
-              element={<IncomeForm />}
-            />
+              <Route
+                path="/categories"
+                element={<CategoryList />}
+              />
 
-            <Route
-              path="/income/:id/edit"
-              element={<IncomeForm />}
-            />
+              <Route
+                path="/categories/new"
+                element={<CategoryForm />}
+              />
 
-            <Route
-              path="/budgets"
-              element={<BudgetList />}
-            />
+              <Route
+                path="/categories/:id/edit"
+                element={<CategoryForm />}
+              />
 
-            <Route
-              path="/budgets/new"
-              element={<BudgetForm />}
-            />
+              <Route
+                path="/ai-insights"
+                element={<AiInsights />}
+              />
 
-            <Route
-              path="/budgets/:id/edit"
-              element={<BudgetForm />}
-            />
-
-            <Route
-              path="/notifications"
-              element={<NotificationList />}
-            />
-
-            <Route
-              path="/categories"
-              element={<CategoryList />}
-            />
-
-            <Route
-              path="/categories/new"
-              element={<CategoryForm />}
-            />
-
-            <Route
-              path="/categories/:id/edit"
-              element={<CategoryForm />}
-            />
-
-            <Route
-              path="/ai-insights"
-              element={<AiInsights />}
-            />
-
-            <Route
-              path="/settings"
-              element={<Settings />}
-            />
-
+              <Route
+                path="/settings"
+                element={<Settings />}
+              />
+            </Route>
           </Route>
 
-        </Route>
+          {/* Default routes */}
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to="/dashboard"
+                replace
+              />
+            }
+          />
 
-
-        {/* =========================
-            DEFAULT ROUTES
-        ========================== */}
-
-        <Route
-          path="/"
-          element={
-            <Navigate
-              to="/dashboard"
-              replace
-            />
-          }
-        />
-
-        <Route
-          path="*"
-          element={
-            <Navigate
-              to="/dashboard"
-              replace
-            />
-          }
-        />
-
-      </Routes>
+          <Route
+            path="*"
+            element={
+              <Navigate
+                to="/dashboard"
+                replace
+              />
+            }
+          />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

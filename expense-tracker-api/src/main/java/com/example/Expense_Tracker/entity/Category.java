@@ -36,6 +36,7 @@ public class Category {
     private String icon;
 
     @Column(name = "is_custom")
+    @Builder.Default
     private Boolean isCustom = false;
 
 }

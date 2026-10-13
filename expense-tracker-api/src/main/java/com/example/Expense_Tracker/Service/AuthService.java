@@ -63,7 +63,7 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword_hash())) {
             throw new RuntimeException("Invalid Data");
         }
-        String token = jwtService.generateToken((long) user.getId(), user.getEmail());
+        String token = jwtService.generateToken( user.getId(), user.getEmail());
         LoginHistory loginHistory = LoginHistory.builder()
                 .user(user)
                 .loginTime(OffsetDateTime.now())

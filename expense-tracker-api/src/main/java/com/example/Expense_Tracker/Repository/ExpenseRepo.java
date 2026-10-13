@@ -19,14 +19,15 @@ public interface ExpenseRepo extends JpaRepository<Expense,Long>, JpaSpecificati
     Optional<Expense> findByIdAndUserId(Long Id,Long userId);
 
     @Query("""
-        SELECT e
-        FROM Expense e
-        WHERE e.userId = :userId
-          AND (:categoryId IS NULL OR e.category.id = :categoryId)
-          AND (:paymentMode IS NULL OR e.paymentMode = :paymentMode)
-          AND (:fromDate IS NULL OR e.expenseDate >= :fromDate)
-          AND (:toDate IS NULL OR e.expenseDate <= :toDate)
-        """)
+    SELECT e
+    FROM Expense e
+    JOIN FETCH e.category
+    WHERE e.userId = :userId
+      AND (:categoryId IS NULL OR e.category.id = :categoryId)
+      AND (:paymentMode IS NULL OR e.paymentMode = :paymentMode)
+      AND (:fromDate IS NULL OR e.expenseDate >= :fromDate)
+      AND (:toDate IS NULL OR e.expenseDate <= :toDate)
+    """)
     Page<Expense> findExpensesWithFilters(
             @Param("userId") Long userId,
             @Param("categoryId") Long categoryId,
@@ -94,5 +95,17 @@ public interface ExpenseRepo extends JpaRepository<Expense,Long>, JpaSpecificati
     long countExpensesForUserOnDate(
             @Param("userId") Long userId,
             @Param("expenseDate") LocalDate expenseDate
+    );
+
+    @Query("""
+    SELECT e
+    FROM Expense e
+    JOIN FETCH e.category
+    WHERE e.id = :id
+      AND e.userId = :userId
+    """)
+    Optional<Expense> findByIdAndUserIdWithCategory(
+            @Param("id") Long id,
+            @Param("userId") Long userId
     );
 }

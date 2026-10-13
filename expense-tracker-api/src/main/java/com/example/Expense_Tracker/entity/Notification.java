@@ -44,6 +44,7 @@ public class Notification {
     private NotificationType type;
 
     @Column(name = "is_read")
+    @Builder.Default
     private boolean read = false;
 
     @Column(name = "created_at")

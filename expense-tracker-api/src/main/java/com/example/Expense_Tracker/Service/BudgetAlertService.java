@@ -64,15 +64,14 @@ public class BudgetAlertService {
         LocalDate startDate =LocalDate.of(year, month, 1);
         LocalDate endDate =startDate.plusMonths(1);
 
+        BigDecimal budgetAmount = budget.getAmount();
+        if (budgetAmount.compareTo(BigDecimal.ZERO) <= 0)   return;
+
         BigDecimal totalSpend =expenseRepo.getTotalExpenseForCategoryAndDateRange(
                         userId,
                         categoryId,
                         startDate,
                         endDate);
-
-        BigDecimal budgetAmount = budget.getAmount();
-
-        if (budgetAmount.compareTo(BigDecimal.ZERO) <= 0)   return;
 
         BigDecimal percentageUsed =totalSpend.multiply(BigDecimal.valueOf(100))
                         .divide(budgetAmount,2,RoundingMode.HALF_UP);

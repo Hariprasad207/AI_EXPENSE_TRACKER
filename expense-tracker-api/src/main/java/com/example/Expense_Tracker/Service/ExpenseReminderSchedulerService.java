@@ -42,7 +42,7 @@ public class ExpenseReminderSchedulerService {
 
         for (Users user : users) {
 
-            Long userId = (long) user.getId();
+            Long userId = user.getId();
 
             try {
 

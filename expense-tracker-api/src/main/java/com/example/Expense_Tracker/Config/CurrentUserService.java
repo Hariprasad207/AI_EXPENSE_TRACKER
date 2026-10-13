@@ -17,6 +17,6 @@ public class CurrentUserService {
     }
 
     public Long getCurrentUserID(){
-        return (long) getCurrentUser().getId();
+        return  getCurrentUser().getId();
     }
 }

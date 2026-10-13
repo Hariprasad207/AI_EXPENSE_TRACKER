@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -68,19 +69,22 @@ public class ExpenseService {
     public ExpenseResponse getExpenseById(Long id){
         Long userId = currentUserService.getCurrentUserID();
 
-        Expense expense = expenseRepo.findByIdAndUserId(id,userId)
-                .orElseThrow(()-> new RuntimeException("Expense is not found"));
+        Expense expense = expenseRepo.findByIdAndUserIdWithCategory(id, userId)
+                .orElseThrow(() -> new RuntimeException("Expense is not found"));
 
         return mapToResponse(expense);
     }
 
-    public ExpenseResponse updateExpense(Long id, UpdateExpenseRequest request){
+    @Transactional
+    public ExpenseResponse updateExpense(Long id, UpdateExpenseRequest request) {
 
         Long userId = currentUserService.getCurrentUserID();
-        Expense expense = expenseRepo.findByIdAndUserId(id,userId)
-                .orElseThrow(()-> new RuntimeException("Expense is not found"));
+
+        Expense expense = expenseRepo.findByIdAndUserIdWithCategory(id, userId)
+                .orElseThrow(() ->new RuntimeException("Expense is not found"));
+
         Category category = categoryRepo.findAvailableCategory(request.getCategoryId(),userId)
-                .orElseThrow(()-> new ResourceNotFoundException("Category is not found"));
+                .orElseThrow(() ->new ResourceNotFoundException("Category is not found"));
 
         Long oldCategoryId = expense.getCategory().getId();
         LocalDate oldExpenseDate = expense.getExpenseDate();
@@ -102,7 +106,7 @@ public class ExpenseService {
 
         budgetAlertService.checkBudgetAlerts(
                 userId,
-                updatedExpense.getCategory().getId(),
+                category.getId(),
                 updatedExpense.getExpenseDate()
         );
 

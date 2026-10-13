@@ -35,7 +35,6 @@ public class ExpenseController {
             @PageableDefault(size = 10, sort = "expenseDate", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
-        System.out.println(">>> ExpenseController.getExpenses() REACHED");
         return ResponseEntity.ok(
                 expenseService.getExpenses(categoryId, paymentMode, fromDate, toDate, pageable)
         );
