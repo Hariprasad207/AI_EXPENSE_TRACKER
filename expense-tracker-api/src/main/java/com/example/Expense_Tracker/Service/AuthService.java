@@ -58,10 +58,10 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         Users user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new RuntimeException("Invalid Password or User_id"));
+                        throw new InvalidCredentialsException());
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword_hash())) {
-            throw new RuntimeException("Invalid Data");
+            throw new InvalidCredentialsException();
         }
         String token = jwtService.generateToken( user.getId(), user.getEmail());
         LoginHistory loginHistory = LoginHistory.builder()

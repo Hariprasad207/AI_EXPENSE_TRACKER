@@ -28,7 +28,7 @@ import {
     getAiChatHistory,
     clearAiChatHistory,
     clearAiConversation,
-} from "../api/aiChat";
+} from "../api/aichat";
 
 
 function AIChatBox() {

@@ -1,5 +1,16 @@
 import { useState } from "react";
-import { Box, Button, Card, CardContent, TextField, Typography, Alert, } from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    TextField,
+    Typography,
+    Alert,
+    InputAdornment,
+    IconButton,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
@@ -14,6 +25,7 @@ function Register() {
     });
 
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (event) => {
 
@@ -100,11 +112,26 @@ function Register() {
                             fullWidth
                             label="Password"
                             name="password"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             value={formData.password}
                             onChange={handleChange}
                             margin="normal"
                             required
+                            autoComplete="new-password"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            type="button"
+                                            onClick={() => setShowPassword((previous) => !previous)}
+                                            edge="end"
+                                            aria-label={showPassword ? "Hide password" : "Show password"}
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
                         />
 
                         <Button
