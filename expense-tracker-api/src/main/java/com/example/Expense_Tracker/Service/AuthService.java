@@ -57,8 +57,7 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         Users user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() ->
-                        throw new InvalidCredentialsException());
+            .orElseThrow(InvalidCredentialsException::new);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword_hash())) {
             throw new InvalidCredentialsException();

@@ -32,7 +32,7 @@ services:
       MAIL_FROM: ${MAIL_FROM:-}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:1.7b}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3001}
     depends_on:
       db:
         condition: service_healthy
