@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Service
+@ConditionalOnProperty(name = "ai.provider",havingValue = "ollama",matchIfMissing = true)
 @RequiredArgsConstructor
-public class OllamaService {
+public class OllamaService implements AiProvider {
     @Value("${ollama.base-url}")
     private String ollamaBaseUrl;
 
@@ -24,6 +26,7 @@ public class OllamaService {
 
     private final RestClient.Builder restClientBuilder;
 
+    @Override
     public String generateResponse(String systemPrompt, String userMessage) {
 
         OllamachatRequest request = OllamachatRequest.builder()

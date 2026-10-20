@@ -41,6 +41,11 @@ function AppLayout() {
                 sx={{
                     width: { xs: "100%", md: `calc(100% - ${drawerWidth}px)` },
                     ml: { xs: 0, md: `${drawerWidth}px` },
+                    backgroundColor: "rgba(255,255,255,0.94)",
+                    color: "#172b3a",
+                    boxShadow: "0 3px 18px rgba(29, 65, 54, 0.055)",
+                    borderBottom: "1px solid #e7eeeb",
+                    backdropFilter: "blur(12px)",
                 }}
             >
 
@@ -62,6 +67,8 @@ function AppLayout() {
 
                         sx={{
                             flexGrow: 1,
+                            fontWeight: 700,
+                            letterSpacing: "-0.02em",
                         }}
                     >
                         Personal Finance
@@ -85,7 +92,8 @@ function AppLayout() {
                     minHeight: "100vh",
 
                     backgroundColor:
-                        "#f5f6f8",
+                        "#f4f7f6",
+                    backgroundImage: "radial-gradient(ellipse at 85% 0%, rgba(20,133,111,0.055), transparent 34%)",
                 }}
             >
                 <Toolbar />

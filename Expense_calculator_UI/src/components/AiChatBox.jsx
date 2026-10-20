@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import {
     Alert,
     Box,
@@ -33,113 +36,52 @@ import {
 
 function AIChatBox() {
 
-
     const [open, setOpen] = useState(false);
-
     const [messages, setMessages] = useState([]);
-
     const [input, setInput] = useState("");
-
     const [loading, setLoading] = useState(false);
-
-    const [conversationId, setConversationId] =
-        useState(null);
-
+    const [conversationId, setConversationId] = useState(null);
 
     // --------------------------------------------------
     // DELETE STATE
     // --------------------------------------------------
 
-    const [deleteDialogOpen, setDeleteDialogOpen] =
-        useState(false);
-
-    const [deleteType, setDeleteType] =
-        useState(null);
-
-    const [deleteLoading, setDeleteLoading] =
-        useState(false);
-
-    const [deleteError, setDeleteError] =
-        useState("");
-
-
-    // --------------------------------------------------
-    // ERROR STATE
-    // --------------------------------------------------
-
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [deleteType, setDeleteType] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [deleteError, setDeleteError] = ("");
     const [error, setError] = useState("");
-
-
-    // --------------------------------------------------
-    // MESSAGE BOTTOM REFERENCE
-    // --------------------------------------------------
-
     const messagesEndRef = useRef(null);
 
 
-    // --------------------------------------------------
-    // AUTO SCROLL
-    // --------------------------------------------------
-
     useEffect(() => {
-
         messagesEndRef.current?.scrollIntoView({
             behavior: "smooth",
         });
-
     }, [messages]);
 
-
-    // --------------------------------------------------
-    // LOAD CHAT HISTORY
-    // --------------------------------------------------
-
     useEffect(() => {
-
         if (!open) {
             return;
         }
 
 
         const loadHistory = async () => {
-
             try {
-
                 setError("");
+                const history = await getAiChatHistory();
 
-                const history =
-                    await getAiChatHistory();
-
-
-                if (
-                    Array.isArray(history) &&
-                    history.length > 0
-                ) {
+                if (Array.isArray(history) && history.length > 0) {
 
                     setMessages(history);
+                    const latestMessage = history[history.length - 1];
 
-
-                    // Get conversation ID from
-                    // the latest message
-
-                    const latestMessage =
-                        history[history.length - 1];
-
-
-                    if (
-                        latestMessage?.conversationId
-                    ) {
-
-                        setConversationId(
-                            latestMessage.conversationId
-                        );
-
+                    if (latestMessage?.conversationId) {
+                        setConversationId(latestMessage.conversationId);
                     }
-
                 }
 
             } catch (error) {
-
                 console.error(
                     "Failed to load AI chat history:",
                     error
@@ -148,14 +90,10 @@ function AIChatBox() {
                 setError(
                     "Unable to load chat history."
                 );
-
             }
-
         };
 
-
         loadHistory();
-
     }, [open]);
 
 
@@ -164,65 +102,38 @@ function AIChatBox() {
     // --------------------------------------------------
 
     const handleSendMessage = async () => {
-
         const message = input.trim();
-
-
-        // Do not send empty messages
 
         if (!message || loading) {
             return;
         }
-
-
         setError("");
-
-
-        // Add user message immediately
 
         const userMessage = {
             role: "user",
             message: message,
         };
 
-
         setMessages((previous) => [
             ...previous,
             userMessage,
         ]);
 
-
-        // Clear input
-
         setInput("");
-
         setLoading(true);
 
-
         try {
-
-            const response =
-                await sendAiChatMessage(
-                    message,
-                    conversationId
-                );
-
-
-            // Save conversation ID
+            const response = await sendAiChatMessage(
+                message,
+                conversationId
+            );
 
             if (response?.conversationId) {
-
                 setConversationId(
                     response.conversationId
                 );
-
             }
-
-
-            // Add AI response
-
             const assistantMessage = {
-
                 role: "assistant",
 
                 message:
@@ -243,12 +154,10 @@ function AIChatBox() {
             ]);
 
         } catch (error) {
-
             console.error(
                 "Failed to send AI message:",
                 error
             );
-
 
             setError(
                 error.response?.data?.message ||
@@ -256,59 +165,26 @@ function AIChatBox() {
             );
 
         } finally {
-
             setLoading(false);
-
         }
-
     };
 
-
-    // --------------------------------------------------
-    // ENTER KEY HANDLER
-    // --------------------------------------------------
 
     const handleKeyDown = (event) => {
 
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
-
+        if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
-
             handleSendMessage();
-
         }
-
     };
-
-
-    // --------------------------------------------------
-    // DELETE CURRENT CONVERSATION
-    // --------------------------------------------------
-
-    // --------------------------------------------------
-    // DELETE ALL CONVERSATIONS
-    // --------------------------------------------------
 
     const requestDeleteAll = () => {
-
         setDeleteType("ALL");
-
         setDeleteError("");
-
         setDeleteDialogOpen(true);
-
     };
 
-
-    // --------------------------------------------------
-    // CONFIRM DELETE
-    // --------------------------------------------------
-
     const handleDeleteConfirmed = async () => {
-
         if (deleteLoading) {
             return;
         }
@@ -317,61 +193,30 @@ function AIChatBox() {
         try {
 
             setDeleteLoading(true);
-
             setDeleteError("");
 
-
-            // ------------------------------------------
-            // DELETE ALL
-            // ------------------------------------------
-
             if (deleteType === "ALL") {
-
                 await clearAiChatHistory();
-
             }
 
 
-            // ------------------------------------------
-            // DELETE CURRENT CONVERSATION
-            // ------------------------------------------
-
-            else if (
-                deleteType === "CURRENT" &&
-                conversationId
-            ) {
-
+            else if (deleteType === "CURRENT" && conversationId) {
                 await clearAiConversation(
                     conversationId
                 );
-
             }
 
-
-            // ------------------------------------------
-            // CLEAR FRONTEND STATE
-            // ------------------------------------------
-
             setMessages([]);
-
             setConversationId(null);
-
             setInput("");
-
             setError("");
-
-
-            // Close confirmation dialog
-
             setDeleteDialogOpen(false);
 
         } catch (error) {
-
             console.error(
                 "Failed to delete AI chat:",
                 error
             );
-
 
             setDeleteError(
                 error.response?.data?.message ||
@@ -379,44 +224,24 @@ function AIChatBox() {
             );
 
         } finally {
-
             setDeleteLoading(false);
-
         }
 
     };
 
 
-    // --------------------------------------------------
-    // CLOSE DELETE DIALOG
-    // --------------------------------------------------
-
     const handleCloseDeleteDialog = () => {
-
         if (deleteLoading) {
             return;
         }
 
-
         setDeleteDialogOpen(false);
-
         setDeleteError("");
-
     };
-
-
-    // --------------------------------------------------
-    // RENDER
-    // --------------------------------------------------
 
     return (
         <>
-            {/* ==================================================
-                FLOATING CHAT BUTTON
-            ================================================== */}
-
             {!open && (
-
                 <Fab
                     color="primary"
                     aria-label="Open AI assistant"
@@ -435,10 +260,6 @@ function AIChatBox() {
 
             )}
 
-
-            {/* ==================================================
-                CHAT WINDOW
-            ================================================== */}
 
             {open && (
 
@@ -461,11 +282,6 @@ function AIChatBox() {
                         zIndex: 1300,
                     }}
                 >
-
-                    {/* ==========================================
-                        HEADER
-                    ========================================== */}
-
                     <Box
                         sx={{
                             display: "flex",
@@ -731,11 +547,89 @@ function AIChatBox() {
                                         }}
                                     >
 
-                                        <Typography
-                                            variant="body2"
-                                        >
-                                            {msg.message}
-                                        </Typography>
+                                        {msg.role === "assistant" ? (
+                                            <Box
+                                                className="ai-markdown-content"
+                                                sx={{
+                                                    fontSize: "0.875rem",
+                                                    lineHeight: 1.6,
+                                                    overflowWrap: "anywhere",
+                                                    "& p": {
+                                                        m: 0,
+                                                        mb: 1,
+                                                        "&:last-child": { mb: 0 },
+                                                    },
+                                                    "& h1, & h2, & h3, & h4": {
+                                                        fontWeight: 700,
+                                                        lineHeight: 1.3,
+                                                        mt: 1.5,
+                                                        mb: 0.75,
+                                                    },
+                                                    "& h1": { fontSize: "1.25rem" },
+                                                    "& h2": { fontSize: "1.125rem" },
+                                                    "& h3, & h4": { fontSize: "1rem" },
+                                                    "& ul, & ol": {
+                                                        pl: 2.5,
+                                                        mt: 0.5,
+                                                        mb: 1,
+                                                    },
+                                                    "& li": { mb: 0.4 },
+                                                    "& li > p": { mb: 0.5 },
+                                                    "& strong": { fontWeight: 700 },
+                                                    "& blockquote": {
+                                                        m: 0,
+                                                        mb: 1,
+                                                        pl: 1.5,
+                                                        borderLeft: "3px solid",
+                                                        borderColor: "divider",
+                                                        color: "text.secondary",
+                                                    },
+                                                    "& table": {
+                                                        width: "100%",
+                                                        borderCollapse: "collapse",
+                                                        display: "block",
+                                                        overflowX: "auto",
+                                                        mb: 1,
+                                                    },
+                                                    "& th, & td": {
+                                                        border: "1px solid",
+                                                        borderColor: "divider",
+                                                        p: 0.75,
+                                                        textAlign: "left",
+                                                    },
+                                                    "& pre": {
+                                                        whiteSpace: "pre",
+                                                        overflowX: "auto",
+                                                        p: 1,
+                                                        borderRadius: 1,
+                                                        bgcolor: "action.hover",
+                                                        mb: 1,
+                                                    },
+                                                    "& :not(pre) > code": {
+                                                        px: 0.5,
+                                                        py: 0.2,
+                                                        borderRadius: 0.5,
+                                                        bgcolor: "action.hover",
+                                                        fontFamily: "monospace",
+                                                    },
+                                                    "& a": {
+                                                        color: "primary.main",
+                                                        overflowWrap: "anywhere",
+                                                    },
+                                                }}
+                                            >
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                    {String(msg.message ?? "")}
+                                                </ReactMarkdown>
+                                            </Box>
+                                        ) : (
+                                            <Typography
+                                                variant="body2"
+                                                sx={{ whiteSpace: "pre-wrap" }}
+                                            >
+                                                {msg.message}
+                                            </Typography>
+                                        )}
 
                                     </Box>
 

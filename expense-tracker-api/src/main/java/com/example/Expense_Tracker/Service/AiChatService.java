@@ -22,7 +22,7 @@ public class AiChatService {
 
     private final AiChatHistoryRepo aiChatHistoryRepo;
     private final FinancialContextService financialContextService;
-    private final OllamaService ollamaService;
+    private final AiProvider aiProvider;
     private final ObjectMapper objectMapper;
 
     public AiChatHistoryResponse chat(Long userId,AiChatHistoryRequest request) {
@@ -71,7 +71,12 @@ public class AiChatService {
 
                 Your responsibilities:
                 - Analyze the financial data provided.
-                - Answer concisely in 3–5 short points.
+                - Match the response detail to the user's request.
+                - For simple questions, answer concisely.
+                - For reports or requests for a complete breakdown, providea structured, sufficiently detailed response.
+                - For financial reports, include relevant income, expenses,payment methods, budgets, balance, savings, and practical observations when those details are available in the context.
+                - Use Markdown headings, bullet points, and tables where useful.
+                - Never invent missing financial values.
                 - Do not show your reasoning or internal analysis.
                 - Use only the financial data provided.
                 - Do not repeat the financial context.
@@ -89,7 +94,7 @@ public class AiChatService {
                 """.formatted(financialContextJson);
 
         String assistantMessage =
-                ollamaService.generateResponse(
+                aiProvider.generateResponse(
                         systemPrompt,
                         request.getMessage()
                 );

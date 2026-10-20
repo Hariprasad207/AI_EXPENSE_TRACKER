@@ -15,7 +15,6 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 function Register() {
-
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -28,30 +27,28 @@ function Register() {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (event) => {
-
-        setFormData({
-            ...formData,
+        setFormData((previous) => ({
+            ...previous,
             [event.target.name]: event.target.value,
-        });
+        }));
     };
 
     const handleSubmit = async (event) => {
-
         event.preventDefault();
 
         try {
             setError("");
-            await api.post(
-                "/auth/register",
-                formData
-            );
+            await api.post("/auth/register", formData);
             navigate("/login");
         } catch (error) {
             setError(
-                error.response?.data?.message ||
-                "Registration failed"
+                error.response?.data?.message || "Registration failed"
             );
         }
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword((previous) => !previous);
     };
 
     return (
@@ -65,14 +62,18 @@ function Register() {
                 padding: 2,
             }}
         >
-
             <Card sx={{ width: "100%", maxWidth: 400 }}>
                 <CardContent sx={{ p: { xs: 2.5, sm: 4 } }}>
                     <Typography
                         variant="h4"
                         textAlign="center"
                         gutterBottom
-                        sx={{ fontSize: { xs: "1.8rem", sm: "2.125rem" } }}
+                        sx={{
+                            fontSize: {
+                                xs: "1.8rem",
+                                sm: "2.125rem",
+                            },
+                        }}
                     >
                         Create Account
                     </Typography>
@@ -83,10 +84,7 @@ function Register() {
                         </Alert>
                     )}
 
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                    >
+                    <Box component="form" onSubmit={handleSubmit}>
                         <TextField
                             fullWidth
                             label="Full Name"
@@ -94,6 +92,7 @@ function Register() {
                             value={formData.fullName}
                             onChange={handleChange}
                             margin="normal"
+                            autoComplete="name"
                             required
                         />
 
@@ -105,6 +104,7 @@ function Register() {
                             value={formData.email}
                             onChange={handleChange}
                             margin="normal"
+                            autoComplete="email"
                             required
                         />
 
@@ -116,21 +116,33 @@ function Register() {
                             value={formData.password}
                             onChange={handleChange}
                             margin="normal"
-                            required
                             autoComplete="new-password"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            type="button"
-                                            onClick={() => setShowPassword((previous) => !previous)}
-                                            edge="end"
-                                            aria-label={showPassword ? "Hide password" : "Show password"}
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
+                            required
+                            slotProps={{
+                                input: {
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                type="button"
+                                                onClick={togglePasswordVisibility}
+                                                edge="end"
+                                                aria-label={
+                                                    showPassword
+                                                        ? "Hide password"
+                                                        : "Show password"
+                                                }
+                                                aria-pressed={showPassword}
+                                                tabIndex={0}
+                                            >
+                                                {showPassword ? (
+                                                    <VisibilityOff />
+                                                ) : (
+                                                    <Visibility />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                },
                             }}
                         />
 
@@ -143,7 +155,6 @@ function Register() {
                         >
                             Register
                         </Button>
-
                     </Box>
 
                     <Typography
@@ -152,15 +163,10 @@ function Register() {
                         sx={{ mt: 3 }}
                     >
                         Already have an account?{" "}
-                        <Link to="/login">
-                            Login
-                        </Link>
+                        <Link to="/login">Login</Link>
                     </Typography>
-
                 </CardContent>
-
             </Card>
-
         </Box>
     );
 }

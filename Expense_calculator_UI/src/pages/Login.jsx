@@ -191,6 +191,7 @@ function Login() {
                             }}
                         />
 
+
                         <TextField
                             fullWidth
                             label="Password"
@@ -206,32 +207,35 @@ function Login() {
                                     borderRadius: 2,
                                 },
                             }}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() =>
-                                                setShowPassword(
-                                                    (previous) => !previous
-                                                )
-                                            }
-                                            edge="end"
-                                            aria-label={
-                                                showPassword
-                                                    ? "Hide password"
-                                                    : "Show password"
-                                            }
-                                        >
-                                            {showPassword ? (
-                                                <VisibilityOff />
-                                            ) : (
-                                                <Visibility />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
+                            slotProps={{
+                                input: {
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                type="button"
+                                                onClick={() =>
+                                                    setShowPassword((previous) => !previous)
+                                                }
+                                                edge="end"
+                                                aria-label={
+                                                    showPassword
+                                                        ? "Hide password"
+                                                        : "Show password"
+                                                }
+                                                aria-pressed={showPassword}
+                                            >
+                                                {showPassword ? (
+                                                    <VisibilityOff />
+                                                ) : (
+                                                    <Visibility />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                },
                             }}
                         />
+
 
                         {/* Forgot Password */}
                         <Box

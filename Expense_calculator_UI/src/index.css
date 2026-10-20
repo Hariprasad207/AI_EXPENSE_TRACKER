@@ -1,16 +1,32 @@
-* {
-  box-sizing: border-box;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+
+:root {
+  font-family: 'DM Sans', sans-serif;
+  color: #172b3a;
+  background: #f4f7f6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body,
-#root {
-  min-width: 0;
+* { box-sizing: border-box; }
+
+html, body, #root {
+  min-width: 320px;
   min-height: 100%;
   margin: 0;
 }
 
 body {
   overflow-x: hidden;
-  background: #f5f6f8;
+  background: #f4f7f6;
 }
+
+button, input, textarea, select { font: inherit; }
+
+::selection { color: #fff; background: #14856f; }
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: #c9d7d3; border: 2px solid #f4f7f6; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #9eb8b0; }

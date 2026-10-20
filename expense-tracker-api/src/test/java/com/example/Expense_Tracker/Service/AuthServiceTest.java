@@ -159,7 +159,7 @@ public class AuthServiceTest {
         RuntimeException exception = assertThrows(
                 RuntimeException.class,()-> authService.login(request)
         );
-        assertEquals("Invalid Password or User_id",exception.getMessage());
+        assertEquals("Invalid user ID or password",exception.getMessage());
 
         verify(passwordEncoder,never())
                 .matches(anyString(),anyString());
@@ -184,7 +184,7 @@ public class AuthServiceTest {
         RuntimeException exception = assertThrows(
                 RuntimeException.class,()-> authService.login(request)
         );
-        assertEquals("Invalid Data",exception.getMessage());
+        assertEquals("Invalid user ID or password",exception.getMessage());
 
         verify(jwtService,never())
                 .generateToken(anyLong(),anyString());

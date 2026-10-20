@@ -91,16 +91,20 @@ function Sidebar({ mobileOpen, onMobileClose }) {
                 "& .MuiDrawer-paper": {
                     width: drawerWidth,
                     boxSizing: "border-box",
+                    borderRight: "1px solid #e7eeeb",
+                    background: "linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%)",
+                    boxShadow: "8px 0 30px rgba(29, 65, 54, 0.025)",
                 },
             }}
         >
             {/* LOGO / APP NAME */}
 
-            <Toolbar>
+            <Toolbar sx={{ minHeight: "76px !important", px: 2.5 }}>
                 <Typography
                     variant="h6"
                     fontWeight="bold"
                     noWrap
+                    sx={{ color: "#124f45", letterSpacing: "-0.04em" }}
                 >
                     Personal Finance
                 </Typography>
@@ -110,7 +114,7 @@ function Sidebar({ mobileOpen, onMobileClose }) {
 
             {/* MENU */}
 
-            <List sx={{ px: 1 }}>
+            <List sx={{ px: 1.5, pt: 2 }}>
 
                 {menuItems.map((item) => {
 
@@ -128,7 +132,14 @@ function Sidebar({ mobileOpen, onMobileClose }) {
                                 to={item.path}
                                 selected={isActive}
                                 sx={{
-                                    borderRadius: 2,
+                                    borderRadius: 2.5,
+                                    py: 1.1,
+                                    color: "#536761",
+                                    "& .MuiListItemIcon-root": { minWidth: 38, color: "#81928c" },
+                                    "&:hover": { backgroundColor: "#f0f7f4", color: "#126f5e" },
+                                    "&.Mui-selected": { backgroundColor: "#e5f3ee", color: "#126f5e", fontWeight: 700 },
+                                    "&.Mui-selected .MuiListItemIcon-root": { color: "#14856f" },
+                                    "&.Mui-selected:hover": { backgroundColor: "#dcefe8" },
                                 }}
                             >
 
@@ -153,14 +164,16 @@ function Sidebar({ mobileOpen, onMobileClose }) {
 
             <Divider />
 
-            <List sx={{ px: 1 }}>
+            <List sx={{ px: 1.5, py: 1.5 }}>
 
                 <ListItem disablePadding>
 
                     <ListItemButton
                         onClick={handleLogout}
                         sx={{
-                            borderRadius: 2,
+                            borderRadius: 2.5,
+                            color: "#8b625e",
+                            "&:hover": { backgroundColor: "#fff0ee", color: "#c1514b" },
                         }}
                     >
 
@@ -187,8 +200,8 @@ function Sidebar({ mobileOpen, onMobileClose }) {
             ModalProps={{ keepMounted: true }}
             sx={{ display: { xs: "block", md: "none" }, "& .MuiDrawer-paper": { width: drawerWidth } }}
         >
-            <Toolbar>
-                <Typography variant="h6" fontWeight="bold" noWrap>Personal Finance</Typography>
+            <Toolbar sx={{ minHeight: "76px !important", px: 2.5 }}>
+                <Typography variant="h6" fontWeight="bold" noWrap sx={{ color: "#124f45", letterSpacing: "-0.04em" }}>Personal Finance</Typography>
             </Toolbar>
             <Divider />
             <List sx={{ px: 1 }}>
