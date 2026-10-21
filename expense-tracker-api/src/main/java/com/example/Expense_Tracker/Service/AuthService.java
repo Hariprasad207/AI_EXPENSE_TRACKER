@@ -63,6 +63,10 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword_hash())) {
             throw new InvalidCredentialsException();
         }
+        if (!Boolean.TRUE.equals(user.getIsActive())) {
+            throw new InvalidCredentialsException();
+        }
+
         String token = jwtService.generateToken( user.getId(), user.getEmail());
         LoginHistory loginHistory = LoginHistory.builder()
                 .user(user)

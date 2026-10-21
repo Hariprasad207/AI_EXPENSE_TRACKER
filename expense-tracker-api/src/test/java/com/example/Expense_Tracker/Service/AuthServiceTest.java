@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.example.Expense_Tracker.Exception.InvalidCredentialsException;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -402,5 +403,31 @@ public class AuthServiceTest {
         verify(userRepo, never()).findByEmail(anyString());
         verify(passwordResetTokenRepo, never())
                 .save(any(PasswordResetToken.class));
+    }
+
+    @Test 
+    void login_shouldRejectInactiveUser() {
+        user.setIsActive(false);
+
+        LoginRequest request = new LoginRequest();
+        request.setEmail("hari@example.com");
+        request.setPassword("password@123");
+
+        when(userRepo.findByEmail("hari@example.com"))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches("password@123", "hashed-password"))
+                .thenReturn(true);
+
+        assertThrows(
+                InvalidCredentialsException.class,
+                () -> authService.login(request)
+        );
+
+        verify(jwtService, never())
+                .generateToken(anyLong(), anyString());
+
+        verify(loginHistroyRepo, never())
+                .save(any(LoginHistory.class));
     }
 }

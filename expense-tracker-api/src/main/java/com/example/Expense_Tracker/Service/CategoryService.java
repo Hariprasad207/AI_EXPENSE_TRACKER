@@ -32,9 +32,13 @@ public class CategoryService {
                 .toList();
     }
 
-    public CategoryResponse getCategoryById(Long id){
-        Category category= categoryRepo.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("category not found: " +id));
+    public CategoryResponse getCategoryById(Long id) {
+        Long userId = currentUserService.getCurrentUserID();
+
+        Category category = categoryRepo.findAvailableCategory(id, userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Category not found"));
+
         return mapToResponse(category);
     }
 
