@@ -30,7 +30,7 @@ public class EmailService {
 
                 %s
 
-                This code will expire in 5 minutes.
+                This code will expire in 10 minutes.
 
                 If you did not request a password reset, you can safely ignore this email.
 

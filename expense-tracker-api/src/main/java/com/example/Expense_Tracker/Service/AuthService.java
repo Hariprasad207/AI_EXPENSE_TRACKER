@@ -67,7 +67,7 @@ public class AuthService {
             throw new InvalidCredentialsException();
         }
 
-        String token = jwtService.generateToken( user.getId(), user.getEmail());
+        String token = jwtService.generateToken(user.getId(), user.getEmail());
         LoginHistory loginHistory = LoginHistory.builder()
                 .user(user)
                 .loginTime(OffsetDateTime.now())
@@ -85,25 +85,30 @@ public class AuthService {
         if (usersOptional.isEmpty()) return;
 
         Users user = usersOptional.get();
+        OffsetDateTime now = OffsetDateTime.now();
+        Optional<PasswordResetOtp> latestOtp = passwordResetOtpRepo.findTopByUserOrderByCreatedAtDesc(user);
+        if (latestOtp.isPresent()
+                && latestOtp.get().getCreatedAt() != null
+                && latestOtp.get().getCreatedAt().isAfter(now.minusSeconds(60))) {
+            return;
+        }
 
         String otp = String.format("%06d",
                 new SecureRandom().nextInt(1_000_000));
-
-        passwordResetOtpRepo.findTopByUserOrderByCreatedAtDesc(user)
-                .ifPresent(previousOtp -> {
-                    previousOtp.setVerified(true);
-                    passwordResetOtpRepo.save(previousOtp);
-                });
+        latestOtp.ifPresent(previousOtp -> {
+            previousOtp.setVerified(true);
+            passwordResetOtpRepo.save(previousOtp);
+        });
 
         String otpHash = passwordEncoder.encode(otp);
 
         PasswordResetOtp passwordResetOtp = PasswordResetOtp.builder()
                 .user(user)
                 .otpHash(otpHash)
-                .expiresAt(OffsetDateTime.now().plusMinutes(10))
+                .expiresAt(now.plusMinutes(10))
                 .attempts(0)
                 .verified(false)
-                .createdAt(OffsetDateTime.now())
+                .createdAt(now)
                 .build();
 
         passwordResetOtpRepo.save(passwordResetOtp);
@@ -185,19 +190,19 @@ public class AuthService {
                 .orElseThrow(() ->
                         new BadRequestException("Invalid or expired reset token."));
 
-        PasswordResetToken resetToken =passwordResetTokenRepo.findLatestUnusedToken(user)
-                        .orElseThrow(() ->
-                                new BadRequestException("Invalid or expired reset token."));
+        PasswordResetToken resetToken = passwordResetTokenRepo.findLatestUnusedToken(user)
+                .orElseThrow(() ->
+                        new BadRequestException("Invalid or expired reset token."));
 
         if (resetToken.getExpiresAt().isBefore(OffsetDateTime.now()))
             throw new BadRequestException("Reset token has expired. Please restart the reset process.");
 
-        boolean tokenMatches = passwordEncoder.matches(request.getResetToken(),resetToken.getTokenHash());
+        boolean tokenMatches = passwordEncoder.matches(request.getResetToken(), resetToken.getTokenHash());
 
         if (!tokenMatches)
             throw new BadRequestException("Invalid or expired reset token.");
 
-        if (passwordEncoder.matches(request.getNewPassword(),user.getPassword_hash()))
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword_hash()))
             throw new BadRequestException("New password must be different from your current password.");
 
         user.setPassword_hash(passwordEncoder.encode(request.getNewPassword()));

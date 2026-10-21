@@ -405,7 +405,7 @@ public class AuthServiceTest {
                 .save(any(PasswordResetToken.class));
     }
 
-    @Test 
+    @Test
     void login_shouldRejectInactiveUser() {
         user.setIsActive(false);
 
@@ -430,4 +430,64 @@ public class AuthServiceTest {
         verify(loginHistroyRepo, never())
                 .save(any(LoginHistory.class));
     }
+
+    @Test
+        void forgetPassword_shouldSuppressRequestsWithinCooldown() {
+        ForgetPasswordRequest request = new ForgetPasswordRequest();
+        request.setEmail("hari@example.com");
+
+        PasswordResetOtp recentOtp = PasswordResetOtp.builder()
+                .user(user)
+                .otpHash("otp-hash")
+                .createdAt(OffsetDateTime.now().minusSeconds(30))
+                .expiresAt(OffsetDateTime.now().plusMinutes(9))
+                .attempts(0)
+                .verified(false)
+                .invalidated(false)
+                .build();
+
+        when(userRepo.findByEmail("hari@example.com"))
+                .thenReturn(Optional.of(user));
+        when(passwordResetOtpRepo.findTopByUserOrderByCreatedAtDesc(user))
+                .thenReturn(Optional.of(recentOtp));
+
+        authService.forgetPassword(request);
+
+        verify(passwordResetOtpRepo, never())
+                .save(any(PasswordResetOtp.class));
+        verify(emailService, never())
+                .sendTestMail(anyString(), anyString());
+        }
+
+    @Test
+    void forgetPassword_shouldAllowRequestAfterCooldown() {
+        ForgetPasswordRequest request = new ForgetPasswordRequest();
+        request.setEmail("hari@example.com");
+
+        PasswordResetOtp oldOtp = PasswordResetOtp.builder()
+                .user(user)
+                .otpHash("old-otp-hash")
+                .createdAt(OffsetDateTime.now().minusSeconds(90))
+                .expiresAt(OffsetDateTime.now().plusMinutes(5))
+                .attempts(0)
+                .verified(false)
+                .invalidated(false)
+                .build();
+
+        when(userRepo.findByEmail("hari@example.com"))
+                .thenReturn(Optional.of(user));
+        when(passwordResetOtpRepo.findTopByUserOrderByCreatedAtDesc(user))
+                .thenReturn(Optional.of(oldOtp));
+        when(passwordEncoder.encode(anyString()))
+                .thenReturn("new-otp-hash");
+
+        authService.forgetPassword(request);
+
+        verify(passwordResetOtpRepo, times(2))
+                .save(any(PasswordResetOtp.class));
+        verify(emailService)
+                .sendTestMail(eq("hari@example.com"), anyString());
+        verify(passwordEncoder).encode(anyString());
+    }
+
 }
