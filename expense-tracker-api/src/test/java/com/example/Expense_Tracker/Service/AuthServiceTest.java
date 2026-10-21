@@ -491,34 +491,177 @@ public class AuthServiceTest {
     }
 
 
-@Test
-void verifyOtp_shouldReturnGenericErrorForUnknownEmail() {
-    VerifyOtpRequest request = new VerifyOtpRequest();
-    request.setEmail("unknown@example.com");
-    request.setOtp("123456");
+        @Test
+        void verifyOtp_shouldReturnGenericErrorForUnknownEmail() {
+        VerifyOtpRequest request = new VerifyOtpRequest();
+        request.setEmail("unknown@example.com");
+        request.setOtp("123456");
 
-    when(userRepo.findByEmail("unknown@example.com"))
-            .thenReturn(Optional.empty());
+        when(userRepo.findByEmail("unknown@example.com"))
+                .thenReturn(Optional.empty());
 
-    BadRequestException exception = assertThrows(
-            BadRequestException.class,
-            () -> authService.verifyOtp(request)
-    );
+        BadRequestException exception = assertThrows(
+                BadRequestException.class,
+                () -> authService.verifyOtp(request)
+        );
 
-    assertEquals(
-            "Invalid email or OTP. Please check your details or request a new OTP.",
-            exception.getMessage()
-    );
+        assertEquals(
+                "Invalid email or OTP. Please check your details or request a new OTP.",
+                exception.getMessage()
+        );
 
-    verify(passwordResetOtpRepo, never())
-            .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(any(Users.class));
+        verify(passwordResetOtpRepo, never())
+                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(any(Users.class));
 
-    verify(passwordResetOtpRepo, never())
-            .save(any(PasswordResetOtp.class));
+        verify(passwordResetOtpRepo, never())
+                .save(any(PasswordResetOtp.class));
 
-    verify(passwordResetTokenRepo, never())
-            .save(any(PasswordResetToken.class));
-}
+        verify(passwordResetTokenRepo, never())
+                .save(any(PasswordResetToken.class));
+        }
 
 
+        @Test
+        void verifyOtp_shouldRejectFifthIncorrectAttempt() {
+        VerifyOtpRequest request = new VerifyOtpRequest();
+        request.setEmail("hari@example.com");
+        request.setOtp("999999");
+
+        PasswordResetOtp otp = PasswordResetOtp.builder()
+                .user(user)
+                .otpHash("otp-hash")
+                .expiresAt(OffsetDateTime.now().plusMinutes(5))
+                .attempts(4)
+                .verified(false)
+                .invalidated(false)
+                .createdAt(OffsetDateTime.now())
+                .build();
+
+        when(userRepo.findByEmail("hari@example.com"))
+                .thenReturn(Optional.of(user));
+        when(passwordResetOtpRepo
+                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .thenReturn(Optional.of(otp));
+        when(passwordEncoder.matches("999999", "otp-hash"))
+                .thenReturn(false);
+
+        BadRequestException exception = assertThrows(
+                BadRequestException.class,
+                () -> authService.verifyOtp(request)
+        );
+
+        assertEquals(
+                "Too many incorrect attempts. Please request a new OTP.",
+                exception.getMessage()
+        );
+        assertEquals(5, otp.getAttempts());
+
+        verify(passwordResetOtpRepo).save(otp);
+        verify(passwordResetTokenRepo, never())
+                .save(any(PasswordResetToken.class));
+        }
+
+        @Test
+        void verifyOtp_shouldRejectOtpWhenAttemptLimitAlreadyReached() {
+        VerifyOtpRequest request = new VerifyOtpRequest();
+        request.setEmail("hari@example.com");
+        request.setOtp("123456");
+
+        PasswordResetOtp otp = PasswordResetOtp.builder()
+                .user(user)
+                .otpHash("otp-hash")
+                .expiresAt(OffsetDateTime.now().plusMinutes(5))
+                .attempts(5)
+                .verified(false)
+                .invalidated(false)
+                .createdAt(OffsetDateTime.now())
+                .build();
+
+        when(userRepo.findByEmail("hari@example.com"))
+                .thenReturn(Optional.of(user));
+        when(passwordResetOtpRepo
+                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .thenReturn(Optional.of(otp));
+
+        BadRequestException exception = assertThrows(
+                BadRequestException.class,
+                () -> authService.verifyOtp(request)
+        );
+
+        assertEquals(
+                "Tried Too much time. Request a new OTP",
+                exception.getMessage()
+        );
+
+        verify(passwordEncoder, never())
+                .matches(anyString(), anyString());
+        verify(passwordResetTokenRepo, never())
+                .save(any(PasswordResetToken.class));
+        }
+
+        @Test
+        void verifyOtp_shouldRejectInvalidatedOtpAsInactive() {
+        VerifyOtpRequest request = new VerifyOtpRequest();
+        request.setEmail("hari@example.com");
+        request.setOtp("123456");
+
+        when(userRepo.findByEmail("hari@example.com"))
+                .thenReturn(Optional.of(user));
+        when(passwordResetOtpRepo
+                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .thenReturn(Optional.empty());
+
+        BadRequestException exception = assertThrows(
+                BadRequestException.class,
+                () -> authService.verifyOtp(request)
+        );
+
+        assertEquals(
+                "No active OTP found.Please request a new OTP",
+                exception.getMessage()
+        );
+
+        verify(passwordEncoder, never())
+                .matches(anyString(), anyString());
+        verify(passwordResetTokenRepo, never())
+                .save(any(PasswordResetToken.class));
+        }
+
+        @Test
+        void verifyOtp_shouldRejectAlreadyVerifiedOtp() {
+        VerifyOtpRequest request = new VerifyOtpRequest();
+        request.setEmail("hari@example.com");
+        request.setOtp("123456");
+
+        PasswordResetOtp otp = PasswordResetOtp.builder()
+                .user(user)
+                .otpHash("otp-hash")
+                .expiresAt(OffsetDateTime.now().plusMinutes(5))
+                .attempts(0)
+                .verified(true)
+                .invalidated(false)
+                .createdAt(OffsetDateTime.now())
+                .build();
+
+        when(userRepo.findByEmail("hari@example.com"))
+                .thenReturn(Optional.of(user));
+        when(passwordResetOtpRepo
+                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .thenReturn(Optional.of(otp));
+
+        BadRequestException exception = assertThrows(
+                BadRequestException.class,
+                () -> authService.verifyOtp(request)
+        );
+
+        assertEquals(
+                "This Otp is already verified.Please request a new OTP",
+                exception.getMessage()
+        );
+
+        verify(passwordEncoder, never())
+                .matches(anyString(), anyString());
+        verify(passwordResetTokenRepo, never())
+                .save(any(PasswordResetToken.class));
+        }
 }
