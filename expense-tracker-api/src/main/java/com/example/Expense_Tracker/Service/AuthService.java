@@ -120,7 +120,8 @@ public class AuthService {
     public VerifyOtpResponse verifyOtp(com.example.Expense_Tracker.dto.OTP.VerifyOtpRequest request) {
         String email = request.getEmail().trim().toLowerCase();
         Users user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("The user with that email id not found"));
+        .orElseThrow(() -> new BadRequestException(
+                "Invalid email or OTP. Please check your details or request a new OTP."));
 
         PasswordResetOtp resetOtp = passwordResetOtpRepo
                 .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user)

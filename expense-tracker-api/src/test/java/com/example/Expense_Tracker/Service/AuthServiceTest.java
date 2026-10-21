@@ -490,4 +490,35 @@ public class AuthServiceTest {
         verify(passwordEncoder).encode(anyString());
     }
 
+
+@Test
+void verifyOtp_shouldReturnGenericErrorForUnknownEmail() {
+    VerifyOtpRequest request = new VerifyOtpRequest();
+    request.setEmail("unknown@example.com");
+    request.setOtp("123456");
+
+    when(userRepo.findByEmail("unknown@example.com"))
+            .thenReturn(Optional.empty());
+
+    BadRequestException exception = assertThrows(
+            BadRequestException.class,
+            () -> authService.verifyOtp(request)
+    );
+
+    assertEquals(
+            "Invalid email or OTP. Please check your details or request a new OTP.",
+            exception.getMessage()
+    );
+
+    verify(passwordResetOtpRepo, never())
+            .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(any(Users.class));
+
+    verify(passwordResetOtpRepo, never())
+            .save(any(PasswordResetOtp.class));
+
+    verify(passwordResetTokenRepo, never())
+            .save(any(PasswordResetToken.class));
+}
+
+
 }
