@@ -79,7 +79,7 @@ public class AuthService {
     @Transactional
     public void forgetPassword(ForgetPasswordRequest request) {
         String email = request.getEmail().trim().toLowerCase();
-        Optional<Users> usersOptional = userRepo.findByEmail(email);
+        Optional<Users> usersOptional = userRepo.findByEmailForUpdate(email);
 
         if (usersOptional.isEmpty()) return;
 
@@ -95,7 +95,7 @@ public class AuthService {
         String otp = String.format("%06d",
                 new SecureRandom().nextInt(1_000_000));
         latestOtp.ifPresent(previousOtp -> {
-            previousOtp.setVerified(true);
+            previousOtp.setInvalidated(true);
             passwordResetOtpRepo.save(previousOtp);
         });
 

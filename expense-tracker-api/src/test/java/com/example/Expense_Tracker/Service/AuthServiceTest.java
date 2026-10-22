@@ -201,7 +201,7 @@ public class AuthServiceTest {
         ForgetPasswordRequest request = new ForgetPasswordRequest();
         request.setEmail("hari@example.com");
 
-        when(userRepo.findByEmail("hari@example.com"))
+        when(userRepo.findByEmailForUpdate("hari@example.com"))
                 .thenReturn(Optional.of(user));
         when(passwordResetOtpRepo.findTopByUserOrderByCreatedAtDesc(user))
                 .thenReturn(Optional.empty());
@@ -219,7 +219,7 @@ public class AuthServiceTest {
         ForgetPasswordRequest request = new ForgetPasswordRequest();
 
         request.setEmail("dummy@test.com");
-        when(userRepo.findByEmail("dummy@test.com"))
+        when(userRepo.findByEmailForUpdate("dummy@test.com"))
                 .thenReturn(Optional.empty());
         authService.forgetPassword(request);
         verify(passwordResetOtpRepo,never())
@@ -338,7 +338,7 @@ public class AuthServiceTest {
                 .invalidated(false)
                 .build();
 
-        when(userRepo.findByEmail("hari@example.com"))
+        when(userRepo.findByEmailForUpdate("hari@example.com"))
                 .thenReturn(Optional.of(user));
         when(passwordResetOtpRepo.findTopByUserOrderByCreatedAtDesc(user))
                 .thenReturn(Optional.of(recentOtp));
@@ -366,7 +366,7 @@ public class AuthServiceTest {
                 .invalidated(false)
                 .build();
 
-        when(userRepo.findByEmail("hari@example.com"))
+        when(userRepo.findByEmailForUpdate("hari@example.com"))
                 .thenReturn(Optional.of(user));
         when(passwordResetOtpRepo.findTopByUserOrderByCreatedAtDesc(user))
                 .thenReturn(Optional.of(oldOtp));
