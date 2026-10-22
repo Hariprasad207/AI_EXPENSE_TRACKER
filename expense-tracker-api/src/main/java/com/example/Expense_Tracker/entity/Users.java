@@ -44,4 +44,8 @@ public class Users {
     @UpdateTimestamp
     @Column(name="updatedAt")
     private OffsetDateTime updated_at;
+
+    @Column(name = "email_verified", nullable = false)
+    @Builder.Default
+    private Boolean emailVerified = true;
 }

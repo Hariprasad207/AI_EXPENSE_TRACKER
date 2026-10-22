@@ -13,10 +13,7 @@ import com.example.Expense_Tracker.dto.OTP.VerifyOtpRequest;
 import com.example.Expense_Tracker.dto.OTP.VerifyOtpResponse;
 import com.example.Expense_Tracker.dto.Password.ForgetPasswordRequest;
 import com.example.Expense_Tracker.dto.Password.ResetPasswordRequest;
-import com.example.Expense_Tracker.entity.LoginHistory;
-import com.example.Expense_Tracker.entity.PasswordResetOtp;
-import com.example.Expense_Tracker.entity.PasswordResetToken;
-import com.example.Expense_Tracker.entity.Users;
+import com.example.Expense_Tracker.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,10 +73,10 @@ public class AuthServiceTest {
                 .build();
     }
 
-    @Test
-    void register_shouldCreateUser(){
-        RegisterRequest request = new RegisterRequest();
 
+    @Test
+    void register_shouldCreateUser() {
+        RegisterRequest request = new RegisterRequest();
         request.setFullName("Hari");
         request.setEmail("hari@example.com");
         request.setPassword("password@123");
@@ -87,25 +84,58 @@ public class AuthServiceTest {
         when(userRepo.existsByEmail("hari@example.com"))
                 .thenReturn(false);
 
-        when(passwordEncoder.encode("password@123"))
-                .thenReturn("hashed-password");
+        when(passwordEncoder.encode(anyString()))
+                .thenAnswer(invocation -> {
+                    String value = invocation.getArgument(0);
+                    return value.equals("password@123")
+                            ? "hashed-password"
+                            : "otp-hash";
+                });
+
+        // Return the same user instance passed to save().
+        when(userRepo.save(any(Users.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         authService.register(request);
 
-        ArgumentCaptor<Users> userCaptor = ArgumentCaptor.forClass(Users.class);
+        ArgumentCaptor<Users> userCaptor =
+                ArgumentCaptor.forClass(Users.class);
 
         verify(userRepo).save(userCaptor.capture());
         Users savedUser = userCaptor.getValue();
 
-        assertEquals("Hari",savedUser.getFull_name());
-        assertEquals("hari@example.com",savedUser.getEmail());
-        assertEquals("hashed-password",savedUser.getPassword_hash());
-        assertEquals("INR",savedUser.getCurrency());
+        assertEquals("Hari", savedUser.getFull_name());
+        assertEquals("hari@example.com", savedUser.getEmail());
+        assertEquals("hashed-password", savedUser.getPassword_hash());
+        assertEquals("INR", savedUser.getCurrency());
         assertTrue(savedUser.getIsActive());
+        assertFalse(savedUser.getEmailVerified());
 
-        verify(passwordEncoder)
-                .encode("password@123");
+        ArgumentCaptor<PasswordResetOtp> otpCaptor =
+                ArgumentCaptor.forClass(PasswordResetOtp.class);
+
+        verify(passwordResetOtpRepo).save(otpCaptor.capture());
+        PasswordResetOtp savedOtp = otpCaptor.getValue();
+
+        assertNotNull(savedOtp.getUser());
+        assertEquals(savedUser, savedOtp.getUser());
+        assertEquals(OtpPurpose.EMAIL_VERIFICATION, savedOtp.getPurpose());
+        assertNotNull(savedOtp.getOtpHash());
+        assertFalse(savedOtp.getVerified());
+        assertFalse(savedOtp.getInvalidated());
+        assertEquals(0, savedOtp.getAttempts());
+        assertNotNull(savedOtp.getCreatedAt());
+        assertTrue(savedOtp.getExpiresAt().isAfter(OffsetDateTime.now()));
+
+        verify(passwordEncoder).encode("password@123");
+        verify(passwordEncoder, times(2)).encode(anyString());
+
+        verify(emailService).sendEmailVerificationOtp(
+                eq("hari@example.com"),
+                argThat(otp -> otp != null && otp.matches("\\d{6}"))
+        );
     }
+
 
     @Test
     void register_shouldRejectDuplicateEmail(){
@@ -122,10 +152,16 @@ public class AuthServiceTest {
                 RuntimeException.class,()->authService.register(request)
         );
 
-        assertEquals("You are already Registered",exception.getMessage());
+        assertEquals(
+                "An account with this email already exists.",
+                exception.getMessage()
+        );
 
         verify(userRepo,never()).save(any(Users.class));
-        verify(passwordEncoder,never()).encode(toString());
+        verify(passwordEncoder, never()).encode(anyString());
+        verify(passwordResetOtpRepo, never()).save(any(PasswordResetOtp.class));
+        verify(emailService, never())
+                .sendEmailVerificationOtp(anyString(), anyString());
     }
 
     @Test
@@ -380,5 +416,31 @@ public class AuthServiceTest {
         verify(emailService)
                 .sendTestMail(eq("hari@example.com"), anyString());
         verify(passwordEncoder).encode(anyString());
+    }
+
+    @Test
+    void login_shouldRejectUnverifiedUser() {
+        LoginRequest request = new LoginRequest();
+        request.setEmail("hari@example.com");
+        request.setPassword("password@123");
+
+        user.setEmailVerified(false);
+
+        when(userRepo.findByEmail("hari@example.com"))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+                "password@123", "hashed-password"))
+                .thenReturn(true);
+
+        RuntimeException exception = assertThrows(RuntimeException.class,() -> authService.login(request));
+
+        assertEquals("Please verify your email before logging in.",exception.getMessage());
+
+        verify(jwtService, never())
+                .generateToken(anyLong(), anyString());
+
+        verify(loginHistroyRepo, never())
+                .save(any(LoginHistory.class));
     }
 }

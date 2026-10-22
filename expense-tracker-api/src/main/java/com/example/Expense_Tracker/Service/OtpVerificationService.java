@@ -5,6 +5,7 @@ import com.example.Expense_Tracker.Repository.PasswordResetTokenRepo;
 import com.example.Expense_Tracker.Repository.UserRepo;
 import com.example.Expense_Tracker.dto.OTP.VerifyOtpRequest;
 import com.example.Expense_Tracker.dto.OTP.VerifyOtpResponse;
+import com.example.Expense_Tracker.entity.OtpPurpose;
 import com.example.Expense_Tracker.entity.PasswordResetOtp;
 import com.example.Expense_Tracker.entity.PasswordResetToken;
 import com.example.Expense_Tracker.entity.Users;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -37,7 +39,9 @@ public class OtpVerificationService {
         }
 
         PasswordResetOtp otp = passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user)
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                        user, OtpPurpose.PASSWORD_RESET
+                )
                 .orElse(null);
 
         if (otp == null) {
@@ -108,6 +112,76 @@ public class OtpVerificationService {
                 VerifyOtpResponse.builder()
                         .message("OTP VERIFIED SUCCESSFULLY")
                         .resetToken(rawToken)
+                        .build()
+        );
+    }
+
+    @Transactional
+    public OtpVerificationResult verifyEmail(VerifyOtpRequest request) {
+        String email = request.getEmail().trim().toLowerCase(Locale.ROOT);
+
+        Users user = userRepo.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return OtpVerificationResult.failure(
+                    "Invalid email or OTP. Please check your details or request a new OTP."
+            );
+        }
+
+        if (Boolean.TRUE.equals(user.getEmailVerified())) {
+            return OtpVerificationResult.failure("Email is already verified.");
+        }
+
+        PasswordResetOtp otp = passwordResetOtpRepo
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                        user, OtpPurpose.EMAIL_VERIFICATION
+                )
+                .orElse(null);
+
+        if (otp == null) {
+            return OtpVerificationResult.failure(
+                    "No active email verification OTP found. Please request a new OTP."
+            );
+        }
+
+        if (Boolean.TRUE.equals(otp.getVerified())) {
+            return OtpVerificationResult.failure("This OTP has already been verified.");
+        }
+
+        if (otp.getExpiresAt().isBefore(OffsetDateTime.now())) {
+            return OtpVerificationResult.failure(
+                    "OTP has expired. Please request a new OTP."
+            );
+        }
+
+        if (otp.getAttempts() >= 5) {
+            return OtpVerificationResult.failure(
+                    "Too many attempts. Please request a new OTP."
+            );
+        }
+
+        if (!passwordEncoder.matches(request.getOtp(), otp.getOtpHash())) {
+            otp.setAttempts(otp.getAttempts() + 1);
+            passwordResetOtpRepo.saveAndFlush(otp);
+
+            int remaining = 5 - otp.getAttempts();
+
+            return OtpVerificationResult.failure(
+                    remaining <= 0
+                            ? "Too many incorrect attempts. Please request a new OTP."
+                            : "Invalid OTP. " + remaining + " attempts remaining."
+            );
+        }
+
+        otp.setVerified(true);
+        user.setEmailVerified(true);
+
+        passwordResetOtpRepo.save(otp);
+        userRepo.save(user);
+
+        return OtpVerificationResult.success(
+                VerifyOtpResponse.builder()
+                        .message("EMAIL VERIFIED SUCCESSFULLY")
                         .build()
         );
     }

@@ -1,5 +1,6 @@
 package com.example.Expense_Tracker.Repository;
 
+import com.example.Expense_Tracker.entity.OtpPurpose;
 import com.example.Expense_Tracker.entity.Users;
 import com.example.Expense_Tracker.entity.PasswordResetOtp;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,11 @@ public interface PasswordResetOtpRepo extends JpaRepository<PasswordResetOtp,Lon
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<PasswordResetOtp> findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(Users user);
+
+    Optional<PasswordResetOtp>
+    findTopByUserAndPurposeOrderByCreatedAtDesc(Users user,OtpPurpose purpose);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<PasswordResetOtp>
+    findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(Users user,OtpPurpose purpose);
 }

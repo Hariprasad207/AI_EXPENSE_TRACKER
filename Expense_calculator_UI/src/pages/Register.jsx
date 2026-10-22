@@ -9,6 +9,7 @@ import {
     Alert,
     InputAdornment,
     IconButton,
+    CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,25 +26,44 @@ function Register() {
 
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (event) => {
+        const { name, value } = event.target;
+
         setFormData((previous) => ({
             ...previous,
-            [event.target.name]: event.target.value,
+            [name]: value,
         }));
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        setError("");
+        setLoading(true);
+
         try {
-            setError("");
-            await api.post("/auth/register", formData);
-            navigate("/login");
+            const email = formData.email.trim().toLowerCase();
+
+            await api.post("/auth/register", {
+                fullName: formData.fullName.trim(),
+                email,
+                password: formData.password,
+            });
+
+            navigate("/verify-email", {
+                replace: true,
+                state: { email },
+            });
         } catch (error) {
             setError(
-                error.response?.data?.message || "Registration failed"
+                error.response?.data?.message ||
+                error.response?.data?.error ||
+                "Registration failed. Please try again."
             );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -62,7 +82,14 @@ function Register() {
                 padding: 2,
             }}
         >
-            <Card sx={{ width: "100%", maxWidth: 400 }}>
+            <Card
+                sx={{
+                    width: "100%",
+                    maxWidth: 420,
+                    borderRadius: 3,
+                    boxShadow: 3,
+                }}
+            >
                 <CardContent sx={{ p: { xs: 2.5, sm: 4 } }}>
                     <Typography
                         variant="h4"
@@ -73,9 +100,20 @@ function Register() {
                                 xs: "1.8rem",
                                 sm: "2.125rem",
                             },
+                            fontWeight: 600,
                         }}
                     >
                         Create Account
+                    </Typography>
+
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        textAlign="center"
+                        sx={{ mb: 2.5 }}
+                    >
+                        Register to get started with your Expense Tracker.
+                        You'll verify your email before logging in.
                     </Typography>
 
                     {error && (
@@ -94,6 +132,7 @@ function Register() {
                             margin="normal"
                             autoComplete="name"
                             required
+                            disabled={loading}
                         />
 
                         <TextField
@@ -106,6 +145,7 @@ function Register() {
                             margin="normal"
                             autoComplete="email"
                             required
+                            disabled={loading}
                         />
 
                         <TextField
@@ -118,6 +158,7 @@ function Register() {
                             margin="normal"
                             autoComplete="new-password"
                             required
+                            disabled={loading}
                             slotProps={{
                                 input: {
                                     endAdornment: (
@@ -132,7 +173,7 @@ function Register() {
                                                         : "Show password"
                                                 }
                                                 aria-pressed={showPassword}
-                                                tabIndex={0}
+                                                disabled={loading}
                                             >
                                                 {showPassword ? (
                                                     <VisibilityOff />
@@ -151,9 +192,26 @@ function Register() {
                             fullWidth
                             variant="contained"
                             size="large"
-                            sx={{ mt: 3 }}
+                            disabled={loading}
+                            sx={{
+                                mt: 3,
+                                py: 1.3,
+                                textTransform: "none",
+                                fontSize: "1rem",
+                            }}
                         >
-                            Register
+                            {loading ? (
+                                <>
+                                    <CircularProgress
+                                        size={20}
+                                        color="inherit"
+                                        sx={{ mr: 1 }}
+                                    />
+                                    Creating account...
+                                </>
+                            ) : (
+                                "Create Account"
+                            )}
                         </Button>
                     </Box>
 

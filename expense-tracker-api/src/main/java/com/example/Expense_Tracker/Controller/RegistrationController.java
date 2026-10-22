@@ -36,6 +36,12 @@ public class RegistrationController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/verify-email")
+    public ResponseEntity<VerifyOtpResponse> verifyEmail(
+            @Valid @RequestBody VerifyOtpRequest request) {
+        return ResponseEntity.ok(authService.verifyEmail(request));
+    }
+
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgetPasswordRequest request) {
         authService.forgetPassword(request);

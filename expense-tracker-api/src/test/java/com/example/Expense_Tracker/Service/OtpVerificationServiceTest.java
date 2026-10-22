@@ -5,6 +5,7 @@ import com.example.Expense_Tracker.Repository.PasswordResetTokenRepo;
 import com.example.Expense_Tracker.Repository.UserRepo;
 import com.example.Expense_Tracker.dto.OTP.VerifyOtpRequest;
 import com.example.Expense_Tracker.dto.OTP.VerifyOtpResponse;
+import com.example.Expense_Tracker.entity.OtpPurpose;
 import com.example.Expense_Tracker.entity.PasswordResetOtp;
 import com.example.Expense_Tracker.entity.PasswordResetToken;
 import com.example.Expense_Tracker.entity.Users;
@@ -77,7 +78,8 @@ public class OtpVerificationServiceTest {
                 .thenReturn(Optional.of(user));
 
         when(passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                user, OtpPurpose.PASSWORD_RESET))
                 .thenReturn(Optional.of(otp));
 
         when(passwordEncoder.matches("123456", "otp-hash"))
@@ -125,7 +127,8 @@ public class OtpVerificationServiceTest {
                 .thenReturn(Optional.of(user));
 
         when(passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                user, OtpPurpose.PASSWORD_RESET))
                 .thenReturn(Optional.of(otp));
 
         when(passwordEncoder.matches("999999", "otp-hash"))
@@ -166,7 +169,8 @@ public class OtpVerificationServiceTest {
                 .thenReturn(Optional.of(user));
 
         when(passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                user, OtpPurpose.PASSWORD_RESET))
                 .thenReturn(Optional.of(otp));
 
         OtpVerificationResult result =
@@ -234,7 +238,8 @@ public class OtpVerificationServiceTest {
                 .thenReturn(Optional.of(user));
 
         when(passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                user, OtpPurpose.PASSWORD_RESET))
                 .thenReturn(Optional.of(otp));
 
         when(passwordEncoder.matches("999999", "otp-hash"))
@@ -275,7 +280,8 @@ public class OtpVerificationServiceTest {
                 .thenReturn(Optional.of(user));
 
         when(passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                user, OtpPurpose.PASSWORD_RESET))
                 .thenReturn(Optional.of(otp));
 
         OtpVerificationResult result =
@@ -304,7 +310,8 @@ public class OtpVerificationServiceTest {
                 .thenReturn(Optional.of(user));
 
         when(passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                user, OtpPurpose.PASSWORD_RESET))
                 .thenReturn(Optional.empty());
 
         OtpVerificationResult result =
@@ -342,7 +349,8 @@ public class OtpVerificationServiceTest {
                 .thenReturn(Optional.of(user));
 
         when(passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user))
+                .findTopByUserAndPurposeAndInvalidatedFalseOrderByCreatedAtDesc(
+                user, OtpPurpose.PASSWORD_RESET))
                 .thenReturn(Optional.of(otp));
 
         OtpVerificationResult result =

@@ -42,4 +42,9 @@ public class PasswordResetOtp {
     @Column(name = "created_at",nullable = false)
     @Builder.Default
     private OffsetDateTime createdAt = OffsetDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "purpose" , nullable = false , length = 30)
+    @Builder.Default
+    private OtpPurpose purpose = OtpPurpose.PASSWORD_RESET;
 }

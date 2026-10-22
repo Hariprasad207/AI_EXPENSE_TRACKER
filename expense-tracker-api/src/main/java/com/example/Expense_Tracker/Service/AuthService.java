@@ -10,13 +10,11 @@ import com.example.Expense_Tracker.Repository.PasswordResetOtpRepo;
 import com.example.Expense_Tracker.dto.LoginRegister.LoginRequest;
 import com.example.Expense_Tracker.dto.LoginRegister.LoginResponse;
 import com.example.Expense_Tracker.dto.LoginRegister.RegisterRequest;
+import com.example.Expense_Tracker.dto.OTP.VerifyOtpRequest;
 import com.example.Expense_Tracker.dto.OTP.VerifyOtpResponse;
 import com.example.Expense_Tracker.dto.Password.ForgetPasswordRequest;
 import com.example.Expense_Tracker.dto.Password.ResetPasswordRequest;
-import com.example.Expense_Tracker.entity.LoginHistory;
-import com.example.Expense_Tracker.entity.PasswordResetToken;
-import com.example.Expense_Tracker.entity.Users;
-import com.example.Expense_Tracker.entity.PasswordResetOtp;
+import com.example.Expense_Tracker.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,32 +37,73 @@ public class AuthService {
     private final PasswordResetTokenRepo passwordResetTokenRepo;
     private final OtpVerificationService otpVerificationService;
 
+
+    @Transactional
     public void register(RegisterRequest request) {
-        if (userRepo.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("You are already Registered");
+        String email = request.getEmail().trim().toLowerCase();
+
+        if (userRepo.existsByEmail(email)) {
+            throw new BadRequestException(
+                    "An account with this email already exists."
+            );
         }
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
+
         Users user = Users.builder()
-                .full_name(request.getFullName())
-                .email(request.getEmail())
-                .password_hash(hashedPassword)
+                .full_name(request.getFullName().trim())
+                .email(email)
+                .password_hash(passwordEncoder.encode(request.getPassword()))
                 .currency("INR")
                 .isActive(true)
+                .emailVerified(false)
                 .build();
 
-        userRepo.save(user);
+        Users savedUser = userRepo.save(user);
+
+        OffsetDateTime now = OffsetDateTime.now();
+        String otp = String.format(
+                "%06d",
+                new SecureRandom().nextInt(1_000_000)
+        );
+
+        String otpHash = passwordEncoder.encode(otp);
+
+        PasswordResetOtp verificationOtp = PasswordResetOtp.builder()
+                .user(savedUser)
+                .purpose(OtpPurpose.EMAIL_VERIFICATION)
+                .otpHash(otpHash)
+                .createdAt(now)
+                .expiresAt(now.plusMinutes(10))
+                .attempts(0)
+                .verified(false)
+                .invalidated(false)
+                .build();
+
+        passwordResetOtpRepo.save(verificationOtp);
+        emailService.sendEmailVerificationOtp(email, otp);
     }
 
     public LoginResponse login(LoginRequest request) {
-        Users user = userRepo.findByEmail(request.getEmail())
+        String email = request.getEmail().trim().toLowerCase(java.util.Locale.ROOT);
+
+        Users user = userRepo.findByEmail(email)
             .orElseThrow(InvalidCredentialsException::new);
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword_hash())) {
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword_hash())) {
             throw new InvalidCredentialsException();
         }
+
+        if (!Boolean.TRUE.equals(user.getEmailVerified())) {
+            throw new BadRequestException(
+                "Please verify your email before logging in.");
+        }
+
         if (!Boolean.TRUE.equals(user.getIsActive())) {
             throw new InvalidCredentialsException();
         }
+
+    // Keep the rest of your existing method unchanged.
 
         String token = jwtService.generateToken(user.getId(), user.getEmail());
         LoginHistory loginHistory = LoginHistory.builder()
@@ -74,6 +113,16 @@ public class AuthService {
         loginHistroyRepo.save(loginHistory);
 
         return new LoginResponse(token);
+    }
+
+    public VerifyOtpResponse verifyEmail(VerifyOtpRequest request) {
+        OtpVerificationResult result = otpVerificationService.verifyEmail(request);
+
+        if (!result.isSuccess()) {
+            throw new BadRequestException(result.errorMessage());
+        }
+
+        return result.response();
     }
 
     @Transactional

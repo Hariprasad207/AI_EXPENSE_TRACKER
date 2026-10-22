@@ -24,6 +24,7 @@ const Register = lazy(() => import("./pages/Register"));
 const ForgotPassword = lazy(() => import("./pages/ForgetPassword"));
 const VerifyOtp = lazy(() => import("./pages/VerifyOtp"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const VerifyEmail = lazy(() => import("./pages/verifyEmail"));
 
 // Dashboard
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -105,6 +106,8 @@ function App() {
             path="/verify-otp"
             element={<VerifyOtp />}
           />
+
+          <Route path="/verify-email" element={<VerifyEmail />} />
 
           <Route
             path="/reset-password"

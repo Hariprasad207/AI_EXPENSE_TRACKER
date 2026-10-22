@@ -40,4 +40,31 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendEmailVerificationOtp(String to, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom(fromAddress);
+        message.setTo(to);
+        message.setSubject("Expense Tracker - Verify your email");
+
+        message.setText("""
+            Hello,
+
+            Thank you for registering with Expense Tracker.
+
+            Your email verification code is:
+
+            %s
+
+            This code will expire in 10 minutes.
+
+            If you did not create an Expense Tracker account, you can safely ignore this email.
+
+            Regards,
+            Expense Tracker
+            """.formatted(otp));
+
+        mailSender.send(message);
+    }
 }
