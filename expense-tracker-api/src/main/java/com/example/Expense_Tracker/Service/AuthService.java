@@ -12,7 +12,6 @@ import com.example.Expense_Tracker.dto.LoginRegister.LoginResponse;
 import com.example.Expense_Tracker.dto.LoginRegister.RegisterRequest;
 import com.example.Expense_Tracker.dto.OTP.VerifyOtpResponse;
 import com.example.Expense_Tracker.dto.Password.ForgetPasswordRequest;
-import com.example.Expense_Tracker.dto.OTP.VerifyOtpRequest;
 import com.example.Expense_Tracker.dto.Password.ResetPasswordRequest;
 import com.example.Expense_Tracker.entity.LoginHistory;
 import com.example.Expense_Tracker.entity.PasswordResetToken;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,6 +37,7 @@ public class AuthService {
     private final PasswordResetOtpRepo passwordResetOtpRepo;
     private final EmailService emailService;
     private final PasswordResetTokenRepo passwordResetTokenRepo;
+    private final OtpVerificationService otpVerificationService;
 
     public void register(RegisterRequest request) {
         if (userRepo.existsByEmail(request.getEmail())) {
@@ -116,69 +115,17 @@ public class AuthService {
         emailService.sendTestMail(user.getEmail(), otp);
     }
 
-    @Transactional
-    public VerifyOtpResponse verifyOtp(com.example.Expense_Tracker.dto.OTP.VerifyOtpRequest request) {
-        String email = request.getEmail().trim().toLowerCase();
-        Users user = userRepo.findByEmail(email)
-        .orElseThrow(() -> new BadRequestException(
-                "Invalid email or OTP. Please check your details or request a new OTP."));
+    public VerifyOtpResponse verifyOtp(
+            com.example.Expense_Tracker.dto.OTP.VerifyOtpRequest request
+    ) {
+        OtpVerificationResult result = otpVerificationService.verify(request);
 
-        PasswordResetOtp resetOtp = passwordResetOtpRepo
-                .findTopByUserAndInvalidatedFalseOrderByCreatedAtDesc(user)
-                .orElseThrow(() -> new BadRequestException("No active OTP found.Please request a new OTP"));
-
-        if (Boolean.TRUE.equals(resetOtp.getVerified()))
-            throw new BadRequestException("This Otp is already verified.Please request a new OTP");
-
-        if (resetOtp.getExpiresAt().isBefore(OffsetDateTime.now()))
-            throw new BadRequestException("OTP is expired. Request a new OTP");
-
-        if (resetOtp.getAttempts() >= 5)
-            throw new BadRequestException("Tried Too much time. Request a new OTP");
-
-        if (Boolean.TRUE.equals(resetOtp.getInvalidated()))
-            throw new BadRequestException("This OTP is no longer valid. Please request a new OTP.");
-
-        boolean otpMatches = passwordEncoder.matches(request.getOtp(), resetOtp.getOtpHash());
-
-        if (!otpMatches) {
-            resetOtp.setAttempts(resetOtp.getAttempts() + 1);
-            passwordResetOtpRepo.save(resetOtp);
-            int remainingAttempts = 5 - resetOtp.getAttempts();
-            if (remainingAttempts <= 0)
-                throw new BadRequestException("Too many incorrect attempts. Please request a new OTP.");
-
-            throw new BadRequestException("Invalid OTP. " + remainingAttempts + " attempts remaining.");
+        if (!result.isSuccess()) {
+            throw new BadRequestException(result.errorMessage());
         }
-        resetOtp.setVerified(true);
-        passwordResetOtpRepo.save(resetOtp);
 
-        passwordResetTokenRepo.findLatestUnusedToken(user)
-                .ifPresent(previousToken -> {
-                    previousToken.setUsed(true);
-                    passwordResetTokenRepo.save(previousToken);
-                });
-
-        String rawResetToken = UUID.randomUUID().toString();
-
-        String tokenHash = passwordEncoder.encode(rawResetToken);
-
-        PasswordResetToken resetToken = PasswordResetToken.builder()
-                .user(user)
-                .tokenHash(tokenHash)
-                .expiresAt(OffsetDateTime.now().plusMinutes(10))
-                .used(false)
-                .createdAt(OffsetDateTime.now())
-                .build();
-
-        passwordResetTokenRepo.save(resetToken);
-
-        return VerifyOtpResponse.builder()
-                .message("OTP VERIFIED SUCCESSFULLY")
-                .resetToken(rawResetToken)
-                .build();
+        return result.response();
     }
-
     @Transactional
     public void resetPassword(ResetPasswordRequest request) {
 
