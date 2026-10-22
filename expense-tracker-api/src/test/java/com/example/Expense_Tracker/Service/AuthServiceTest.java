@@ -252,7 +252,7 @@ public class AuthServiceTest {
         when(userRepo.findByEmail("hari@example.com"))
                 .thenReturn(Optional.of(user));
 
-        when(passwordResetTokenRepo.findLatestUnusedToken(user))
+        when(passwordResetTokenRepo.findFirstByUserAndUsedFalseOrderByCreatedAtDesc(user))
                 .thenReturn(Optional.of(resetToken));
 
         when(passwordEncoder.matches(

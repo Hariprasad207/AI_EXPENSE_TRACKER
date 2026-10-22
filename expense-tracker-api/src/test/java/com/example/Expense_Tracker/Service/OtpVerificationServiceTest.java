@@ -86,7 +86,7 @@ public class OtpVerificationServiceTest {
         when(passwordEncoder.encode(anyString()))
                 .thenReturn("reset-token-hash");
 
-        when(passwordResetTokenRepo.findLatestUnusedToken(user))
+        when(passwordResetTokenRepo.findFirstByUserAndUsedFalseOrderByCreatedAtDesc(user))
                 .thenReturn(Optional.empty());
 
         OtpVerificationResult result =
