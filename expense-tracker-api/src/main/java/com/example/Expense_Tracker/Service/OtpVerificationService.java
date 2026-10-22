@@ -86,7 +86,7 @@ public class OtpVerificationService {
         otp.setVerified(true);
         passwordResetOtpRepo.save(otp);
 
-        passwordResetTokenRepo.findLatestUnusedToken(user)
+        passwordResetTokenRepo.findFirstByUserAndUsedFalseOrderByCreatedAtDesc(user)
                 .ifPresent(previousToken -> {
                     previousToken.setUsed(true);
                     passwordResetTokenRepo.save(previousToken);

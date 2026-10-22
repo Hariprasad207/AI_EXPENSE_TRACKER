@@ -138,7 +138,7 @@ public class AuthService {
                 .orElseThrow(() ->
                         new BadRequestException("Invalid or expired reset token."));
 
-        PasswordResetToken resetToken = passwordResetTokenRepo.findLatestUnusedToken(user)
+        PasswordResetToken resetToken = passwordResetTokenRepo.findFirstByUserAndUsedFalseOrderByCreatedAtDesc(user)
                 .orElseThrow(() ->
                         new BadRequestException("Invalid or expired reset token."));
 

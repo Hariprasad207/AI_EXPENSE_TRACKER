@@ -13,14 +13,7 @@ import java.util.Optional;
 public interface PasswordResetTokenRepo extends JpaRepository<PasswordResetToken,Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("""
-            SELECT p
-            FROM PasswordResetToken p
-            WHERE p.user = :user
-              AND p.used = false
-            ORDER BY p.createdAt DESC
-            """)
-    Optional<PasswordResetToken> findLatestUnusedToken(
-            @Param("user") Users user
+    Optional<PasswordResetToken> findFirstByUserAndUsedFalseOrderByCreatedAtDesc(
+            Users user
     );
 }
