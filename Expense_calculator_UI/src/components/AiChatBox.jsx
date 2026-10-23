@@ -49,9 +49,10 @@ function AIChatBox() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteType, setDeleteType] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
-    const [deleteError, setDeleteError] = ("");
+    const [deleteError, setDeleteError] = useState("");
     const [error, setError] = useState("");
     const messagesEndRef = useRef(null);
+    const deleteDialogTriggerRef = useRef(null);
 
 
     useEffect(() => {
@@ -344,10 +345,8 @@ function AIChatBox() {
                                 <IconButton
                                     aria-label="Delete all conversations"
 
-                                    onClick={
-                                        requestDeleteAll
-                                    }
-
+                                    onClick={requestDeleteAll}
+                                    ref={deleteDialogTriggerRef}
                                     disabled={
                                         loading ||
                                         deleteLoading

@@ -1,4 +1,3 @@
-
 package com.example.Expense_Tracker.Service;
 
 import com.example.Expense_Tracker.Exception.AiChatException;
@@ -70,9 +69,7 @@ class GeminiServiceTest {
                             {
                               "content": {
                                 "parts": [
-                                  {
-                                    "text": "Your spending increased."
-                                  }
+                                  {"text": "Your spending increased."}
                                 ],
                                 "role": "model"
                               },
@@ -157,6 +154,9 @@ class GeminiServiceTest {
         server.expect(requestTo(URL))
                 .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
 
+        server.expect(requestTo(URL))
+                .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
         AiChatException exception = assertThrows(
                 AiChatException.class,
                 () -> geminiService.generateResponse(
@@ -164,6 +164,53 @@ class GeminiServiceTest {
                 )
         );
 
+        assertTrue(
+                exception.getMessage().contains("Gemini request failed")
+        );
+        assertEquals(503, exception.getStatusCode());
+    }
+
+    @Test
+    void generateResponse_shouldRetry503AndReturnGeneratedText() {
+        server.expect(requestTo(URL))
+                .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+        server.expect(requestTo(URL))
+                .andRespond(withSuccess(
+                        """
+                        {
+                          "candidates": [
+                            {
+                              "content": {
+                                "parts": [{"text": "Recovered successfully."}]
+                              }
+                            }
+                          ]
+                        }
+                        """,
+                        MediaType.APPLICATION_JSON
+                ));
+
+        String result = geminiService.generateResponse(
+                "System prompt", "Hello"
+        );
+
+        assertEquals("Recovered successfully.", result);
+    }
+
+    @Test
+    void generateResponse_shouldNotRetryOtherHttpErrors() {
+        server.expect(requestTo(URL))
+                .andRespond(withStatus(HttpStatus.BAD_REQUEST));
+
+        AiChatException exception = assertThrows(
+                AiChatException.class,
+                () -> geminiService.generateResponse(
+                        "System prompt", "Hello"
+                )
+        );
+
+        assertEquals(502, exception.getStatusCode());
         assertTrue(
                 exception.getMessage().contains("Gemini request failed")
         );
