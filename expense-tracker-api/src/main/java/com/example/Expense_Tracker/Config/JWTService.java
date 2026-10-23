@@ -16,15 +16,27 @@ public class JWTService {
     private final long expirationTime;
 
     public JWTService(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration}") long expirationTime
-    ) {
-        this.secretKey = Keys.hmacShaKeyFor(
-                secret.getBytes(StandardCharsets.UTF_8)
+        @Value("${jwt.secret}") String secret,
+        @Value("${jwt.expiration}") long expirationTime
+) {
+    if (secret == null || secret.isBlank()) {
+        throw new IllegalArgumentException(
+                "JWT secret must not be blank"
         );
-
-        this.expirationTime = expirationTime;
     }
+
+    if (expirationTime <= 0) {
+        throw new IllegalArgumentException(
+                "JWT expiration must be positive"
+        );
+    }
+
+    this.secretKey = Keys.hmacShaKeyFor(
+            secret.getBytes(StandardCharsets.UTF_8)
+    );
+
+    this.expirationTime = expirationTime;
+}
 
     public String generateToken(Long userID,String email){
         Date now = new Date();

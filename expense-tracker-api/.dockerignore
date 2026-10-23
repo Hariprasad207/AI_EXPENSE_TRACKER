@@ -1,6 +1,14 @@
-
 target/
 .idea/
 .vscode/
 .git/
 *.log
+
+# Local environment files
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Local secrets and configuration
+src/main/resources/application.properties

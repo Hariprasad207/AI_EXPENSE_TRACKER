@@ -4,20 +4,26 @@ FROM maven:3.9-eclipse-temurin-25 AS build
 
 WORKDIR /app
 
-# Copy Maven configuration and source code
 COPY pom.xml .
 COPY src ./src
 
-# Package the application
-RUN mvn -B -DskipTests package
+# Use the committed environment-variable template as the active configuration
+RUN cp src/main/resources/application-example.properties \
+    src/main/resources/application.properties \
+    && mvn -B -DskipTests package
 
 # Stage 2: Run the application
 FROM eclipse-temurin:25-jre
 
 WORKDIR /app
 
-# Copy the packaged JAR from the build stage
-COPY --from=build /app/target/*.jar app.jar
+# Create an unprivileged runtime user
+RUN groupadd --system spring \
+    && useradd --system --gid spring --home-dir /app spring
+
+COPY --from=build --chown=spring:spring /app/target/*.jar app.jar
+
+USER spring:spring
 
 EXPOSE 8080
 

@@ -199,4 +199,46 @@ class JwtAuthenticationFilterTest {
                 SecurityContextHolder.getContext().getAuthentication()
         );
     }
+
+
+    @Test
+    void doFilter_shouldContinueWithoutAuthentication_whenExtractUserIdThrowsJwtException()
+            throws ServletException, IOException {
+
+        String token = "malformed-token";
+        request.addHeader("Authorization", "Bearer " + token);
+
+        when(jwtService.isTokenValid(token)).thenReturn(true);
+        when(jwtService.extractUserId(token))
+                .thenThrow(new io.jsonwebtoken.MalformedJwtException("Malformed token"));
+
+        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+
+        verify(jwtService).isTokenValid(token);
+        verify(jwtService).extractUserId(token);
+        verifyNoInteractions(userRepo);
+        verify(filterChain).doFilter(request, response);
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    @Test
+    void doFilter_shouldContinueWithoutAuthentication_whenExtractUserIdThrowsIllegalArgumentException()
+            throws ServletException, IOException {
+
+        String token = "invalid-subject-token";
+        request.addHeader("Authorization", "Bearer " + token);
+
+        when(jwtService.isTokenValid(token)).thenReturn(true);
+        when(jwtService.extractUserId(token))
+                .thenThrow(new IllegalArgumentException("Invalid user ID"));
+
+        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+
+        verify(jwtService).isTokenValid(token);
+        verify(jwtService).extractUserId(token);
+        verifyNoInteractions(userRepo);
+        verify(filterChain).doFilter(request, response);
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+    }
+
 }

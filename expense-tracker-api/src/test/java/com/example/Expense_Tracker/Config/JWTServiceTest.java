@@ -57,4 +57,28 @@ class JWTServiceTest {
 
         assertFalse(shortLivedJwtService.isTokenValid(token));
     }
+
+    @Test
+    void constructor_shouldRejectBlankSecret() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new JWTService("   ", expirationTime)
+        );
+    }
+
+    @Test
+    void constructor_shouldRejectZeroExpiration() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new JWTService(secret, 0)
+        );
+    }
+
+    @Test
+    void constructor_shouldRejectNegativeExpiration() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new JWTService(secret, -1)
+        );
+    }
 }

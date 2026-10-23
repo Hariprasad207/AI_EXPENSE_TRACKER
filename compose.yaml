@@ -14,12 +14,30 @@ services:
       timeout: 5s
       retries: 10
 
+  postgres-test:
+    image: postgres:17
+    profiles:
+      - testing
+    environment:
+      POSTGRES_DB: expense_tracker_concurrency_test
+      POSTGRES_USER: expense_test_user
+      POSTGRES_PASSWORD: ${PG_TEST_DB_PASSWORD:?Set PG_TEST_DB_PASSWORD in your process environment}
+    ports:
+      - "127.0.0.1:15432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\"" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   backend:
     build:
       context: ./expense-tracker-api
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     environment:
       DB_URL: jdbc:postgresql://db:5432/${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}

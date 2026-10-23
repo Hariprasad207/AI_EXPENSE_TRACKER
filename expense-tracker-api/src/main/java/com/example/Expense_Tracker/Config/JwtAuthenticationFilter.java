@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import io.jsonwebtoken.JwtException;
 
 @Component
 @RequiredArgsConstructor
@@ -43,10 +44,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        Long userId = jwtService.extractUserId(token);
+        final Long userId;
 
-        Users user = userRepo.findById(userId)
-                .orElse(null);
+try {
+    userId = jwtService.extractUserId(token);
+} catch (JwtException | IllegalArgumentException exception) {
+    SecurityContextHolder.clearContext();
+    filterChain.doFilter(request, response);
+    return;
+}
+
+Users user = userRepo.findById(userId)
+        .orElse(null);
 
         if (user != null && Boolean.TRUE.equals(user.getIsActive())) {
 
