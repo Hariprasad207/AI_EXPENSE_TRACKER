@@ -21,7 +21,7 @@ jobs:
           POSTGRES_USER: expense_test_user
           POSTGRES_PASSWORD: ci_test_password
         ports:
-          - 5432:5432
+          - 15432:5432
         options: >-
           --health-cmd "pg_isready -U expense_test_user -d expense_tracker_concurrency_test"
           --health-interval 5s
@@ -33,7 +33,7 @@ jobs:
         working-directory: expense-tracker-api
 
     env:
-      PG_TEST_DB_URL: jdbc:postgresql://localhost:5432/expense_tracker_concurrency_test
+      PG_TEST_DB_URL: jdbc:postgresql://localhost:15432/expense_tracker_concurrency_test
       PG_TEST_DB_USERNAME: expense_test_user
       PG_TEST_DB_PASSWORD: ci_test_password
 
