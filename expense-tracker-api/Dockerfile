@@ -14,6 +14,9 @@ RUN cp src/main/resources/application-example.properties \
 
 # Stage 2: Run the application
 FROM eclipse-temurin:25-jre
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
