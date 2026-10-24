@@ -63,7 +63,7 @@ services:
     build:
       context: ./Expense_calculator_UI
       args:
-        VITE_API_BASE_URL: http://localhost:8080/api
+        VITE_API_BASE_URL: /api
     restart: unless-stopped
     ports:
       - "3001:80"

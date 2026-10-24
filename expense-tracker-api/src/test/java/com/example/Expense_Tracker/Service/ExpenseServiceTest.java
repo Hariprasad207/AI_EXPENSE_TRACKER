@@ -1,6 +1,8 @@
 package com.example.Expense_Tracker.Service;
 
 import com.example.Expense_Tracker.Config.CurrentUserService;
+import com.example.Expense_Tracker.Exception.BadRequestException;
+import com.example.Expense_Tracker.Exception.ResourceNotFoundException;
 import com.example.Expense_Tracker.Repository.CategoryRepo;
 import com.example.Expense_Tracker.Repository.ExpenseRepo;
 import com.example.Expense_Tracker.dto.Expense.CreateExpenseRequest;
@@ -102,8 +104,8 @@ public class ExpenseServiceTest {
         when(expenseRepo.findByIdAndUserIdWithCategory(999L,userId))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,()-> expenseService.getExpenseById(999L)
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,()-> expenseService.getExpenseById(999L)
         );
 
         assertEquals("Expense is not found",exception.getMessage());
@@ -144,6 +146,36 @@ public class ExpenseServiceTest {
     }
 
     @Test
+    void currentExpense_ShouldRejectIncomeCategory() {
+        CreateExpenseRequest request = new CreateExpenseRequest();
+        request.setCategoryId(10L);
+        request.setExpenseDate(LocalDate.of(2026, 10, 5));
+        request.setTitle("Invalid expense category");
+        request.setAmount(new BigDecimal("100.00"));
+        request.setPaymentMode(Expense.PaymentMode.UPI);
+
+        category.setType(Category.CategoryType.INCOME);
+
+        when(currentUserService.getCurrentUserID()).thenReturn(userId);
+        when(categoryRepo.findAvailableCategory(10L, userId))
+                .thenReturn(Optional.of(category));
+
+        BadRequestException exception = assertThrows(
+                BadRequestException.class,
+                () -> expenseService.currentExpense(request)
+        );
+
+        assertEquals(
+                "Selected category must be an expense category",
+                exception.getMessage()
+        );
+
+        verify(expenseRepo, never()).save(any(Expense.class));
+        verify(budgetAlertService, never())
+                .checkBudgetAlerts(anyLong(), anyLong(), any());
+    }
+
+    @Test
     void currentExpense_ShouldThrowExceptionWhenCategoryNotExist(){
         CreateExpenseRequest request = new CreateExpenseRequest();
         request.setCategoryId(100L);
@@ -158,8 +190,8 @@ public class ExpenseServiceTest {
         when(categoryRepo.findAvailableCategory(100L,userId))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class, ()-> expenseService.currentExpense(request)
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class, ()-> expenseService.currentExpense(request)
         );
 
         assertEquals("Category not found",exception.getMessage());
@@ -210,6 +242,38 @@ public class ExpenseServiceTest {
     }
 
     @Test
+    void updateExpense_ShouldRejectIncomeCategory() {
+        UpdateExpenseRequest request = new UpdateExpenseRequest();
+        request.setCategoryId(10L);
+        request.setAmount(new BigDecimal("750.00"));
+        request.setPaymentMode(Expense.PaymentMode.UPI);
+        request.setExpenseDate(LocalDate.of(2026, 10, 6));
+        request.setTitle("Invalid updated expense");
+
+        category.setType(Category.CategoryType.INCOME);
+
+        when(currentUserService.getCurrentUserID()).thenReturn(userId);
+        when(expenseRepo.findByIdAndUserIdWithCategory(100L, userId))
+                .thenReturn(Optional.of(expense));
+        when(categoryRepo.findAvailableCategory(10L, userId))
+                .thenReturn(Optional.of(category));
+
+        BadRequestException exception = assertThrows(
+                BadRequestException.class,
+                () -> expenseService.updateExpense(100L, request)
+        );
+
+        assertEquals(
+                "Selected category must be an expense category",
+                exception.getMessage()
+        );
+
+        verify(expenseRepo, never()).save(any(Expense.class));
+        verify(budgetAlertService, never())
+                .checkBudgetAlerts(anyLong(), anyLong(), any());
+    }
+
+    @Test
     void updateExpense_ShouldThrowExceptionWhenExpenseDoesNotExist() {
         UpdateExpenseRequest request = new UpdateExpenseRequest();
 
@@ -219,8 +283,8 @@ public class ExpenseServiceTest {
         when(expenseRepo.findByIdAndUserIdWithCategory(190L, userId))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class, ()-> expenseService.updateExpense(190L,request)
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class, ()-> expenseService.updateExpense(190L,request)
         );
 
         assertEquals("Expense is not found",exception.getMessage());
@@ -251,7 +315,7 @@ public class ExpenseServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(
-                RuntimeException.class,
+                ResourceNotFoundException.class,
                 () -> expenseService.updateExpense(100L, request)
         );
 
@@ -287,8 +351,8 @@ public class ExpenseServiceTest {
         when(expenseRepo.findByIdAndUserId(999L, userId))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
                 () -> expenseService.deleteExpense(999L)
         );
 

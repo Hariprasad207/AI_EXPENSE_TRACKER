@@ -1,6 +1,7 @@
 package com.example.Expense_Tracker.Service;
 
 import com.example.Expense_Tracker.Config.CurrentUserService;
+import com.example.Expense_Tracker.Exception.BadRequestException;
 import com.example.Expense_Tracker.Exception.ResourceNotFoundException;
 import com.example.Expense_Tracker.Repository.CategoryRepo;
 import com.example.Expense_Tracker.Repository.ExpenseRepo;
@@ -29,8 +30,14 @@ public class ExpenseService {
         Long userId = currentUserService.getCurrentUserID();
         Category category = categoryRepo.findAvailableCategory(request.getCategoryId(), userId
                 ).orElseThrow(() ->
-                        new RuntimeException("Category not found")
+                        new ResourceNotFoundException("Category not found")
                 );
+
+        if (category.getType() != Category.CategoryType.EXPENSE) {
+            throw new BadRequestException(
+                    "Selected category must be an expense category"
+            );
+        }
 
         Expense expense = Expense.builder()
                 .userId(userId)
@@ -70,7 +77,7 @@ public class ExpenseService {
         Long userId = currentUserService.getCurrentUserID();
 
         Expense expense = expenseRepo.findByIdAndUserIdWithCategory(id, userId)
-                .orElseThrow(() -> new RuntimeException("Expense is not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Expense is not found"));
 
         return mapToResponse(expense);
     }
@@ -81,10 +88,16 @@ public class ExpenseService {
         Long userId = currentUserService.getCurrentUserID();
 
         Expense expense = expenseRepo.findByIdAndUserIdWithCategory(id, userId)
-                .orElseThrow(() ->new RuntimeException("Expense is not found"));
+                .orElseThrow(() ->new ResourceNotFoundException("Expense is not found"));
 
         Category category = categoryRepo.findAvailableCategory(request.getCategoryId(),userId)
                 .orElseThrow(() ->new ResourceNotFoundException("Category is not found"));
+
+        if (category.getType() != Category.CategoryType.EXPENSE) {
+            throw new BadRequestException(
+                    "Selected category must be an expense category"
+            );
+        }
 
         Long oldCategoryId = expense.getCategory().getId();
         LocalDate oldExpenseDate = expense.getExpenseDate();
@@ -116,7 +129,7 @@ public class ExpenseService {
     public void deleteExpense(Long id){
         Long userID =  currentUserService.getCurrentUserID();
         Expense expense = expenseRepo.findByIdAndUserId(id,userID)
-                .orElseThrow(()->new RuntimeException("Expense not found"));
+                .orElseThrow(()->new ResourceNotFoundException("Expense not found"));
 
         Long categoryId = expense.getCategory().getId();
         LocalDate expenseDate = expense.getExpenseDate();

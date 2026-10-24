@@ -8,6 +8,7 @@ import com.example.Expense_Tracker.dto.Budget.BudgetRequest;
 import com.example.Expense_Tracker.dto.Budget.BudgetResponse;
 import com.example.Expense_Tracker.entity.Budget;
 import com.example.Expense_Tracker.entity.Category;
+import com.example.Expense_Tracker.Exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cglib.core.Local;
@@ -34,7 +35,7 @@ public class BudgetService {
         }
 
         Category category = categoryRepo.findById(categoryId)
-                .orElseThrow(() ->new RuntimeException("This category is not found")
+                .orElseThrow(() ->new ResourceNotFoundException("This category is not found")
                 );
 
         if (category.getType() != Category.CategoryType.EXPENSE) {
@@ -115,7 +116,7 @@ public class BudgetService {
 
     public BudgetResponse getBudgetById(Long userId,Long budgetId) {
         Budget budget =budgetRepo.findByIdAndUserId(budgetId,userId)
-                        .orElseThrow(() ->new RuntimeException("Budget not found")
+                        .orElseThrow(() ->new ResourceNotFoundException("Budget not found")
                         );
 
         return mapToResponse(budget);
@@ -124,7 +125,7 @@ public class BudgetService {
     public BudgetResponse updateBudgetById(Long userId,Long id,BudgetRequest request) {
 
         Budget budget =budgetRepo.findByIdAndUserId(id,userId)
-                        .orElseThrow(() ->new RuntimeException("The budget is not found"));
+                        .orElseThrow(() ->new ResourceNotFoundException("The budget is not found"));
 
         validateCategory(userId,request.getCategoryId());
 
@@ -147,7 +148,7 @@ public class BudgetService {
 
     public void deleteBudget(Long id,Long userId) {
         Budget budget =budgetRepo.findByIdAndUserId(id,userId)
-                        .orElseThrow(() -> new RuntimeException("The budget is not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("The budget is not found"));
 
         budgetRepo.delete(budget);
     }
@@ -156,7 +157,7 @@ public class BudgetService {
 
         Budget budget = budgetRepo.findByIdAndUserId(budgetId, userId)
                 .orElseThrow(() ->
-                        new RuntimeException("That budget is not found")
+                        new ResourceNotFoundException("That budget is not found")
                 );
 
         LocalDate startDate = LocalDate.of(
