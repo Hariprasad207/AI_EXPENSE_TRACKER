@@ -290,7 +290,7 @@ CREATE TABLE public.password_reset_otp (
   , otp_hash character varying(250) NOT NULL
   , verified boolean NOT NULL
   , user_id bigint NOT NULL
-  , purpose character varying(30) DEFAULT 'PASSWORD_RESET': :character varying NOT NULL
+  , purpose character varying(30) DEFAULT 'PASSWORD_RESET' NOT NULL
 );
 
 
