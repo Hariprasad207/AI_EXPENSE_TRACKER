@@ -36,10 +36,10 @@ CREATE TABLE public.ai_chat_history (
   , user_id bigint NOT NULL
   , CONSTRAINT ai_chat_history_role_check CHECK (
     (
-      (role): :text = ANY (
+      (role)::text = ANY (
         (
           ARRAY ['USER'::character varying, 'ASSISTANT'::character varying]
-        ): :text []
+        )::text[]
       )
     )
   )
@@ -73,10 +73,10 @@ CREATE TABLE public.ai_insight (
   , year integer
   , CONSTRAINT ai_insight_type_check CHECK (
     (
-      (type): :text = ANY (
+      (type)::text = ANY (
         (
           ARRAY ['HIGH_SPENDING'::character varying, 'SAVING'::character varying, 'BUDGET_WARNING'::character varying, 'SPENDING_TREND'::character varying, 'GENERAL'::character varying]
-        ): :text []
+        )::text[]
       )
     )
   )
@@ -130,10 +130,10 @@ CREATE TABLE public.categories (
   , user_id bigint
   , CONSTRAINT categories_type_check CHECK (
     (
-      (type): :text = ANY (
+      (type)::text = ANY (
         (
           ARRAY ['EXPENSE'::character varying, 'INCOME'::character varying]
-        ): :text []
+        )::text[]
       )
     )
   )
@@ -167,10 +167,10 @@ CREATE TABLE public.expenses (
   , category_id bigint NOT NULL
   , CONSTRAINT expenses_payment_mode_check CHECK (
     (
-      (payment_mode): :text = ANY (
+      (payment_mode)::text = ANY (
         (
           ARRAY ['CASH'::character varying, 'CREDIT_CARD'::character varying, 'DEBIT_CARD'::character varying, 'UPI'::character varying, 'BANK_TRANSFER'::character varying]
-        ): :text []
+        )::text[]
       )
     )
   )
@@ -257,10 +257,10 @@ CREATE TABLE public.notifications (
   , budget_year integer
   , CONSTRAINT notifications_type_check CHECK (
     (
-      (type): :text = ANY (
+      (type)::text = ANY (
         (
           ARRAY ['REMINDER'::character varying, 'BUDGET_ALERT'::character varying, 'AI_INSIGHT'::character varying, 'SYSTEM'::character varying, 'EXPENSE_REMINDER'::character varying]
-        ): :text []
+        )::text[]
       )
     )
   )
