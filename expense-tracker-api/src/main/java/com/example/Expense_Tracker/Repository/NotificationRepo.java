@@ -44,4 +44,6 @@ public interface NotificationRepo extends JpaRepository<Notification, Long> {
             OffsetDateTime start,
             OffsetDateTime now
     );
+
+    boolean existsByCategoryId(Long categoryId);
 }

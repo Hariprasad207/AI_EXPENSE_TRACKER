@@ -23,4 +23,6 @@ public interface BudgetRepo extends JpaRepository<Budget,Long> {
       Integer month,
       Integer year
     );
+
+    boolean existsByCategoryId(Long categoryId);
 }

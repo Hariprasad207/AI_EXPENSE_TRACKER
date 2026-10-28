@@ -6,6 +6,11 @@ import com.example.Expense_Tracker.dto.Category.CategoryResponse;
 import com.example.Expense_Tracker.dto.Category.CategoryRequest;
 import com.example.Expense_Tracker.entity.Category;
 import com.example.Expense_Tracker.Exception.ResourceNotFoundException;
+import com.example.Expense_Tracker.Repository.ExpenseRepo;
+import com.example.Expense_Tracker.Repository.IncomeRepo;
+import com.example.Expense_Tracker.Repository.BudgetRepo;
+import com.example.Expense_Tracker.Repository.NotificationRepo;
+import com.example.Expense_Tracker.Exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +21,11 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepo categoryRepo;
     private final CurrentUserService currentUserService;
+
+    private final ExpenseRepo expenseRepo;
+    private final IncomeRepo incomeRepo;
+    private final BudgetRepo budgetRepo;
+    private final NotificationRepo notificationRepo;
 
     public List<CategoryResponse> getAllCategories(){
         Long userID = currentUserService.getCurrentUserID();
@@ -79,10 +89,18 @@ public class CategoryService {
     public void deleteCategory(long id){
         Long userId = currentUserService.getCurrentUserID();
         Category category = categoryRepo.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("This Category not found"));
+                .orElseThrow(()->
+                        new ResourceNotFoundException("This category is not found"));
+        if(!userId.equals(category.getUserId())){
+            throw new ResourceNotFoundException("This category is not found");
+        }
 
-        if(!userId.equals(category.getUserId()))
-                throw new ResourceNotFoundException("This category not found");
+        boolean categoryInUse = expenseRepo.existsByCategory_Id(id)|| incomeRepo.existsByCategoryId(id)
+                || budgetRepo.existsByCategoryId(id) || notificationRepo.existsByCategoryId(id);
+
+        if(categoryInUse){
+            throw new BadRequestException("Cannot delete this Category Because it is used by existing expense,budget,income,notifications");
+        }
         categoryRepo.deleteById(id);
     }
 

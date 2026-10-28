@@ -108,4 +108,6 @@ public interface ExpenseRepo extends JpaRepository<Expense,Long>, JpaSpecificati
             @Param("id") Long id,
             @Param("userId") Long userId
     );
+
+    boolean existsByCategory_Id(Long categoryId);
 }
