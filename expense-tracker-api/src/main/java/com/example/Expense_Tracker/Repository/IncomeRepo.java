@@ -27,4 +27,6 @@ public interface IncomeRepo extends JpaRepository<Income,Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    boolean existsByCategoryId(Long categoryId);
 }
