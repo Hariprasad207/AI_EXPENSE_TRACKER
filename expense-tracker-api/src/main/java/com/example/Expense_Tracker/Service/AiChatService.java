@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class AiChatService {
                 .role(AIChatHistory.AiRole.USER)
                 .conversationId(conversationId)
                 .message(request.getMessage())
-                .createdAt(LocalDate.now())
+                .createdAt(OffsetDateTime.now())
                 .build();
 
         aiChatHistoryRepo.save(userMessage);
@@ -105,7 +105,7 @@ public class AiChatService {
                         .conversationId(conversationId)
                         .role(AIChatHistory.AiRole.ASSISTANT)
                         .message(assistantMessage)
-                        .createdAt(LocalDate.now())
+                        .createdAt(OffsetDateTime.now())
                         .build();
 
         aiChatHistoryRepo.save(assistantMessageEntity);

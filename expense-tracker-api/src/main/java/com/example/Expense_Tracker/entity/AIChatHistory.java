@@ -3,7 +3,7 @@ package com.example.Expense_Tracker.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "ai_chat_history")
@@ -37,5 +37,5 @@ public class AIChatHistory {
     private String message;
 
     @Column(name = "created_at",nullable = false)
-    private LocalDate createdAt;
+    private OffsetDateTime createdAt;
 }
