@@ -9,7 +9,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +37,7 @@ class AiChatHistoryRepoTest {
                         .conversationId("conversation-1")
                         .role(AiRole.USER)
                         .message("How much did I spend this month?")
-                        .createdAt(LocalDate.of(2026, 10, 10))
+                        .createdAt(OffsetDateTime.parse("2026-10-10T10:00:00Z"))
                         .build()
         );
 
@@ -47,7 +47,7 @@ class AiChatHistoryRepoTest {
                         .conversationId("conversation-1")
                         .role(AiRole.ASSISTANT)
                         .message("Your total spending is 12000.")
-                        .createdAt(LocalDate.of(2026, 10, 11))
+                        .createdAt(OffsetDateTime.parse("2026-10-10T10:01:00Z"))
                         .build()
         );
 
@@ -57,7 +57,7 @@ class AiChatHistoryRepoTest {
                         .conversationId("conversation-2")
                         .role(AiRole.USER)
                         .message("Show my budget.")
-                        .createdAt(LocalDate.of(2026, 10, 12))
+                        .createdAt(OffsetDateTime.parse("2026-10-12T10:00:00Z"))
                         .build()
         );
 
@@ -67,7 +67,7 @@ class AiChatHistoryRepoTest {
                         .conversationId("conversation-1")
                         .role(AiRole.USER)
                         .message("Show my expenses.")
-                        .createdAt(LocalDate.of(2026, 10, 13))
+                        .createdAt(OffsetDateTime.parse("2026-10-13T10:00:00Z"))
                         .build()
         );
     }
@@ -80,7 +80,7 @@ class AiChatHistoryRepoTest {
                         .conversationId("conversation-3")
                         .role(AiRole.USER)
                         .message("Hello AI.")
-                        .createdAt(LocalDate.now())
+                        .createdAt(OffsetDateTime.now())
                         .build()
         );
 
