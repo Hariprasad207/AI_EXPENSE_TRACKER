@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const api = axios.create({
@@ -10,15 +11,19 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token");
-        // console.log("Token from localStorage:", token);
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        // Add /api to every API request.
+        if (config.url && !config.url.startsWith("/api/")) {
+            config.url = `/api${config.url.startsWith("/") ? "" : "/"}${config.url}`;
+        }
+
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
@@ -28,9 +33,9 @@ api.interceptors.response.use(
             localStorage.removeItem("token");
             window.location.href = "/login";
         }
+
         return Promise.reject(error);
     }
 );
-
 
 export default api;
